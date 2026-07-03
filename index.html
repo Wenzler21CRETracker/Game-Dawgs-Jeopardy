@@ -661,49 +661,49 @@ function sbSetup(){
 /* ═══════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════ */
-const CATS = ["BREAKING BAD","NFL QUARTERBACKS","POTENT POTABLES","EUROPEAN GEOGRAPHY","PGA TOUR"];
+const CATS = ["90s SATURDAY CARTOONS","POKEMON GEN 1","2000s & BEYOND MOVIES","N. AMERICAN WILDLIFE","FOOD & DRINK"];
 const VALS = [100,200,300,400,500];
 const QA = {
-  "BREAKING BAD":{
-    100:{c:"This is the name of Walter White's former student and reluctant meth-cooking partner, played by Aaron Paul across all five seasons.",a:"Who is Jesse Pinkman?"},
-    200:{c:"Walter White adopts this pseudonym — the surname of a Nobel Prize-winning German physicist — as his drug kingpin alter ego throughout the series.",a:"Who is Heisenberg?"},
-    300:{c:"Gustavo Fring uses this fast food chicken restaurant chain as the legitimate front for his regional drug distribution network across the American Southwest.",a:"What is Los Pollos Hermanos?"},
-    400:{c:"Walter White allows this woman — Jesse's girlfriend and a recovering addict — to choke to death in her sleep rather than intervening, a decision that haunts Jesse for the remainder of the series.",a:"Who is Jane Margolis?"},
-    500:{c:"Gustavo Fring's personal vendetta against the Juarez cartel traces back to the murder of this man — his business partner in Chile, whom he regarded as far more than a colleague.",a:"Who is Maximino Arciniega (Max)?"}
+  "90s SATURDAY CARTOONS":{
+    100:{c:"This Nickelodeon cartoon, which premiered in 1991, follows a shy anthropomorphic dog named Rocko who emigrates from Australia to the fictional American city of O-Town.",a:"What is Rocko's Modern Life?"},
+    200:{c:"This cartoon featured a highly intelligent mouse named Brain and his dim-witted companion Pinky, who each night attempted a new scheme for world domination — originally as segments within Animaniacs before spinning off into their own series.",a:"What is Pinky and the Brain?"},
+    300:{c:"This Cartoon Network series, premiering in 1996, follows a boy genius who secretly maintains a vast laboratory hidden behind a bookcase in his bedroom — unknown to his parents but constantly threatened by his older sister Dee Dee.",a:"What is Dexter's Laboratory?"},
+    400:{c:"In the original Rugrats series, Tommy Pickles always carried this specific tool hidden in his diaper — the item he most frequently used to escape the playpen and launch the babies into adventure.",a:"What is a screwdriver?"},
+    500:{c:"This Fox Kids animated series, which premiered in 1992 and became one of the decade's highest-rated Saturday morning cartoons, was based on a comic book property and featured mutant heroes led by Cyclops and Professor X.",a:"What is X-Men: The Animated Series?"}
   },
-  "NFL QUARTERBACKS":{
-    100:{c:"This quarterback won a record seven Super Bowl championships — six with the New England Patriots and one with the Tampa Bay Buccaneers.",a:"Who is Tom Brady?"},
-    200:{c:"This New Orleans Saints quarterback set the NFL record for most consecutive games with a touchdown pass at 54, a mark he held until his retirement.",a:"Who is Drew Brees?"},
-    300:{c:"Peyton Manning set the NFL single-season record for touchdown passes in 2013. How many did he throw?",a:"What is 55?"},
-    400:{c:"This Pittsburgh Steelers quarterback won four Super Bowl championships in six seasons during the 1970s, earning Super Bowl MVP honors twice.",a:"Who is Terry Bradshaw?"},
-    500:{c:"This San Francisco 49ers quarterback is the only player in NFL history to win the Super Bowl MVP award three times, achieving the feat across four Super Bowl victories.",a:"Who is Joe Montana?"}
+  "POKEMON GEN 1":{
+    100:{c:"This Water-type starter Pokemon, number 007 in the original Pokedex, eventually evolves into Blastoise and was one of three starters available at the beginning of Pokemon Red and Blue.",a:"What is Squirtle?"},
+    200:{c:"This Pokemon is the only one in Generation 1 that can learn the move Splash — a Normal-type move that has absolutely no effect in battle — and is widely considered the most useless Pokemon in competitive play before evolving.",a:"What is Magikarp?"},
+    300:{c:"This Ghost and Poison-type Pokemon — one of only three Ghost-types in all of Generation 1 — is found haunting the Pokemon Tower in Lavender Town and evolves from Gastly via trading.",a:"What is Haunter?"},
+    400:{c:"This Pokemon, number 132 in the original Pokedex, is the only Generation 1 Pokemon that knows the move Transform, allowing it to become a perfect copy of any opponent it faces in battle.",a:"What is Ditto?"},
+    500:{c:"This glitch entity — not officially one of the original 151 Pokemon — could be encountered in the original Red and Blue versions through a specific sequence involving the old man in Viridian City and the coastline outside Cinnabar Island.",a:"What is MissingNo.?"}
   },
-  "POTENT POTABLES":{
-    100:{c:"This agave-based spirit, produced primarily in the Jalisco region of Mexico and named for the city near its origin, is the base liquor in a margarita.",a:"What is tequila?"},
-    200:{c:"This French grape-based brandy must be aged at least two years in French oak barrels and produced in a specific region of southwestern France to legally carry its name.",a:"What is Cognac?"},
-    300:{c:"This bourbon-based cocktail — served over crushed ice with fresh mint and simple syrup — has been the official drink of the Kentucky Derby at Churchill Downs since the 1930s.",a:"What is a Mint Julep?"},
-    400:{c:"This Italian digestif, distilled from the grape skins, seeds, and stems left over after winemaking, is classified as a pomace brandy and typically ranges from 35 to 60 percent alcohol.",a:"What is grappa?"},
-    500:{c:"This specific fermentation method — used in Belgian lambic brewing — relies on wild airborne yeast and bacteria rather than cultivated strains, producing the distinctively sour and funky flavor the style is known for.",a:"What is spontaneous fermentation?"}
+  "2000s & BEYOND MOVIES":{
+    100:{c:"This 2008 Marvel Studios film starring Robert Downey Jr. launched the Marvel Cinematic Universe, following a billionaire weapons manufacturer who builds a powered suit of armor to escape captivity.",a:"What is Iron Man?"},
+    200:{c:"Christopher Nolan directed this 2010 film starring Leonardo DiCaprio as a thief who specializes in entering people's dreams to extract information — or in this case, to plant an idea deep within a target's subconscious.",a:"What is Inception?"},
+    300:{c:"Alfonso Cuaron directed this 2013 film starring Sandra Bullock and George Clooney as astronauts stranded in orbit after their shuttle is destroyed — it won seven Academy Awards including Best Director.",a:"What is Gravity?"},
+    400:{c:"This 2019 South Korean thriller directed by Bong Joon-ho became the first non-English language film in Oscar history to win the Academy Award for Best Picture.",a:"What is Parasite?"},
+    500:{c:"David Fincher directed this 2010 film with a screenplay by Aaron Sorkin that dramatizes the founding of Facebook, starring Jesse Eisenberg as Mark Zuckerberg and winning three Academy Awards.",a:"What is The Social Network?"}
   },
-  "EUROPEAN GEOGRAPHY":{
-    100:{c:"This mountain range forms the natural border between France and Spain and contains the tiny landlocked nation of Andorra nestled within its peaks.",a:"What are the Pyrenees?"},
-    200:{c:"This European capital, built on seven hills and bisected by the Tiber River, is the only major city in the world to contain an independent nation — Vatican City — entirely within its boundaries.",a:"What is Rome?"},
-    300:{c:"This narrow strait separating England from France at its closest point spans just 21 miles and connects the North Sea to the broader English Channel.",a:"What is the Strait of Dover?"},
-    400:{c:"This European microstate, completely surrounded by Italy and perched atop Mount Titano, claims to be the world's oldest republic, with a founding date of 301 AD.",a:"What is San Marino?"},
-    500:{c:"The Sognefjord in Norway stretches over 127 miles inland and reaches depths of more than 4,000 feet, making it the longest and deepest example of this type of glacially carved coastal inlet in all of Europe.",a:"What is a fjord?"}
+  "N. AMERICAN WILDLIFE":{
+    100:{c:"This massive land animal — the heaviest in the Americas at up to 1,500 pounds — was hunted to near extinction in the 19th century before conservation efforts helped restore its population, particularly in Yellowstone National Park.",a:"What is the American bison (buffalo)?"},
+    200:{c:"This semi-aquatic North American rodent, the largest on the continent, builds elaborate dams and lodges from sticks and mud — engineering that significantly alters wetland ecosystems and creates habitat for dozens of other species.",a:"What is a beaver?"},
+    300:{c:"This North American bird, with a wingspan of up to 9.5 feet, was declared extinct in the wild in 1987 before a captive breeding and reintroduction program made it one of the most celebrated conservation success stories in U.S. history.",a:"What is the California condor?"},
+    400:{c:"This marine mammal, found along the Pacific Coast of North America, is one of the few non-primate animals known to use tools — specifically rocks balanced on its chest to crack open shellfish while floating on its back.",a:"What is the sea otter?"},
+    500:{c:"This predator was reintroduced to Yellowstone National Park in 1995 after a 70-year absence, triggering a cascade of ecological changes so sweeping — including altered river courses — that scientists use it as the defining example of a trophic cascade.",a:"What is the gray wolf?"}
   },
-  "PGA TOUR":{
-    100:{c:"This golfer, nicknamed The Golden Bear, won 18 major championships across his career — more than any player in the history of professional golf.",a:"Who is Jack Nicklaus?"},
-    200:{c:"Augusta National Golf Club, the home of The Masters tournament held each April, is located in this U.S. state.",a:"What is Georgia?"},
-    300:{c:"This annual PGA Tour event held at Pebble Beach Golf Links features a unique pro-am format played across three courses including Spyglass Hill and Monterey Peninsula Country Club.",a:"What is the AT&T Pebble Beach Pro-Am?"},
-    400:{c:"Winning all four major championships at least once across a career is known by this name — an achievement Phil Mickelson completed in 2021 when he won the PGA Championship.",a:"What is the Career Grand Slam?"},
-    500:{c:"Amen Corner, the most celebrated and strategically critical stretch of holes at Augusta National, consists of holes 11, 12, and this hole number.",a:"What is 13?"}
+  "FOOD & DRINK":{
+    100:{c:"This cooking technique involves sealing food in vacuum bags and submerging them in precisely temperature-controlled water for extended periods, producing evenly cooked proteins that are impossible to achieve through conventional methods.",a:"What is sous vide?"},
+    200:{c:"This Italian cheese — made from the milk of water buffaloes rather than cows, and protected by European Union designation of origin laws — is the authentic topping of a traditional Neapolitan pizza Margherita.",a:"What is mozzarella di bufala (buffalo mozzarella)?"},
+    300:{c:"This Japanese fermented paste — produced from soybeans, rice, or barley — comes in white, yellow, and red varieties, with darker versions carrying more intense flavor due to longer fermentation periods.",a:"What is miso?"},
+    400:{c:"This French culinary method involves searing meat at high heat and then cooking it low and slow in liquid, and is the foundational technique behind dishes like beef bourguignon and coq au vin.",a:"What is braising?"},
+    500:{c:"This spice, derived from the hand-harvested dried stigmas of a specific crocus flower, requires approximately 75,000 blooms to produce a single pound — making it the most expensive spice in the world by weight.",a:"What is saffron?"}
   }
 };
 const FJ = {
-  category:"COLLEGE FOOTBALL COACHES",
-  c:"This coach won seven national championships across his career — one at LSU in 2003 and six at Alabama from 2009 to 2020 — making him the only head coach in college football history to win titles at two different SEC programs.",
-  a:"Who is Nick Saban?"
+  category:"LORD OF THE RINGS FILMS",
+  c:"In The Return of the King, Eowyn fulfills the prophecy that no man can kill the Witch-king of Angmar by delivering the killing blow herself. But she is aided by a hobbit who stabs the Witch-king first, breaking his power and making the kill possible. Name that hobbit.",
+  a:"Who is Merry (Meriadoc Brandybuck)?"
 };
 const DEFAULT_PLAYERS=[
   {name:"Madison Gibson",color:"#8C2F2F",score:0},
