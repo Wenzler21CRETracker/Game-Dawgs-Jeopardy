@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Dawgs Jeopardy</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --navy:#0E2640;
+  --navy2:#16375A;
+  --navy3:#1A4270;
+  --gold:#C9A227;
+  --gold2:#E8BC3A;
+  --brick:#8C2F2F;
+  --brick2:#A83838;
+  --green:#3B6B4A;
+  --ice:#9FD8E6;
+  --cream:#F4ECD8;
+  --white:#FFFFFF;
+  --used:#091825;
+  --dd-gold:#FFD700;
+  --fj-purple:#2D0A5A;
+  --fj-purple2:#4A1A8C;
+  --danger:#C0392B;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:Calibri,"Segoe UI",Arial,sans-serif;background:var(--navy);color:var(--cream);}
+h1,h2,h3{font-family:Cambria,Georgia,serif;}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;flex-direction:column;align-items:center;padding:2vh 3vw;}
+.screen.active{display:flex;}
+
+/* ── BUTTONS ── */
+.btn{cursor:pointer;border:none;border-radius:10px;font-family:inherit;font-weight:bold;font-size:.95rem;padding:12px 26px;letter-spacing:.02em;transition:filter .12s,transform .08s;}
+.btn:hover{filter:brightness(1.13);}
+.btn:active{transform:scale(.97);}
+.btn:disabled{opacity:.35;cursor:not-allowed;filter:none;}
+.btn-gold{background:var(--gold);color:var(--navy);}
+.btn-brick{background:var(--brick);color:#fff;border:1.5px solid var(--gold);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-outline{background:transparent;color:var(--gold);border:1.5px solid var(--gold);}
+.btn-purple{background:var(--fj-purple2);color:#fff;border:1.5px solid var(--dd-gold);}
+.btn-sm{padding:7px 14px;font-size:.82rem;border-radius:7px;}
+
+/* ── TITLE ── */
+#screen-title{justify-content:center;text-align:center;}
+.title-disc{width:min(62vh,540px);height:min(62vh,540px);border-radius:50%;background:var(--navy2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;border:2px solid var(--navy3);}
+.t-usa{color:var(--gold);font-size:clamp(2.8rem,7vw,4.2rem);font-weight:bold;letter-spacing:.2em;font-family:Cambria,Georgia,serif;}
+.t-geo{color:var(--cream);font-size:clamp(.95rem,2.2vw,1.3rem);letter-spacing:.25em;}
+.t-rule{width:55%;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.t-jep{color:#fff;font-size:clamp(2rem,5.2vw,3rem);font-weight:bold;font-family:Cambria,Georgia,serif;}
+.t-tag{color:var(--ice);font-style:italic;font-size:.88rem;line-height:1.5;text-align:center;}
+
+/* ── BOARD ── */
+#screen-board{width:100%;height:100vh;overflow:hidden;padding:1vh 2vw .4vh;display:flex;flex-direction:column;}
+.board-topbar{width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:.5vh;gap:8px;flex-wrap:wrap;}
+.board-topbar h1{color:var(--gold);font-size:clamp(.9rem,1.8vw,1.3rem);}
+.topbar-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.score-strip{width:100%;display:flex;gap:6px;margin-bottom:.5vh;flex-wrap:wrap;justify-content:center;}
+.score-chip{flex:1 1 120px;max-width:190px;border-radius:6px;padding:5px 10px;display:flex;justify-content:space-between;align-items:center;font-size:.82rem;border:1.5px solid var(--gold);background:var(--navy2);}
+.score-chip b{font-size:.95rem;}
+.board-grid{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:.7fr repeat(5,1fr);gap:5px;flex:1;min-height:0;width:100%;max-width:1600px;align-self:center;}
+.cat-hd{background:var(--brick);border:1px solid var(--gold);border-radius:4px;padding:8px 6px;text-align:center;font-weight:bold;font-size:clamp(1.1rem,2.2vw,1.6rem);letter-spacing:.04em;display:flex;align-items:center;justify-content:center;}
+.cell{background:var(--navy2);border:1px solid var(--gold);border-radius:4px;color:var(--gold);font-family:Cambria,Georgia,serif;font-weight:bold;font-size:clamp(1.3rem,3.5vw,2.6rem);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:filter .12s,transform .08s,background .15s;}
+.cell:hover:not(.used){filter:brightness(1.2);transform:translateY(-1px);}
+.cell.used{background:var(--used);color:#2a3a4c;border-color:#1a2a3c;cursor:default;font-size:.72rem;font-family:inherit;}
+.fj-btn-wrap{flex:0 0 auto;width:100%;display:flex;justify-content:center;margin-top:.4vh;}
+.board-footer{flex:0 0 auto;margin-top:.2vh;font-size:.72rem;color:var(--ice);font-style:italic;text-align:center;}
+
+/* ── VOLUME SLIDER ── */
+.vol-row{display:flex;align-items:center;gap:8px;margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.06);}
+.vol-lbl{font-size:.72rem;color:var(--ice);white-space:nowrap;flex:0 0 auto;}
+.vol-slider{flex:1;accent-color:var(--gold);cursor:pointer;height:4px;}
+.vol-pct{font-size:.72rem;color:var(--gold);font-weight:bold;width:32px;text-align:right;flex:0 0 auto;}
+
+/* ── OVERLAY / MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(4,10,18,.88);display:none;align-items:center;justify-content:center;z-index:50;padding:3vh 3vw;}
+.overlay.active{display:flex;}
+.modal{background:var(--navy2);border:2px solid var(--gold);border-radius:14px;width:min(860px,93vw);padding:3vh 3.5vw;box-shadow:0 16px 48px rgba(0,0,0,.6);}
+.modal.dd-modal{border-color:var(--dd-gold);background:linear-gradient(160deg,#0E2640 70%,#1a3a00 100%);}
+.modal.fj-modal{border-color:var(--dd-gold);background:linear-gradient(160deg,var(--fj-purple) 0%,#0E2640 100%);}
+.eyebrow{color:var(--gold);letter-spacing:.12em;font-weight:bold;text-align:center;margin-bottom:1.4vh;font-size:.9rem;}
+.eyebrow.dd-eye{color:var(--dd-gold);}
+.eyebrow.fj-eye{color:var(--dd-gold);}
+.clue-text{font-family:Cambria,Georgia,serif;font-weight:bold;font-size:clamp(1.25rem,2.4vw,1.65rem);text-align:center;color:var(--cream);min-height:12vh;display:flex;align-items:center;justify-content:center;padding:0 1vw;}
+.ans-label{color:var(--ice);letter-spacing:.1em;font-size:.75rem;font-weight:bold;text-align:center;margin-top:.5rem;}
+.ans-text{font-family:Cambria,Georgia,serif;font-weight:bold;font-size:clamp(1.1rem,2.2vw,1.45rem);text-align:center;color:#fff;margin-top:.3rem;}
+.modal-actions{display:flex;justify-content:center;gap:12px;margin-top:2.2vh;flex-wrap:wrap;}
+.award-label{text-align:center;font-size:.82rem;color:var(--ice);margin-bottom:.7rem;}
+.award-grid{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.award-btn{padding:9px 16px;border-radius:8px;font-weight:bold;font-size:.88rem;color:#fff;border:1.5px solid rgba(255,255,255,.2);cursor:pointer;transition:filter .12s;}
+.award-btn:hover{filter:brightness(1.15);}
+.wrong-btn{padding:9px 16px;border-radius:8px;font-weight:bold;font-size:.88rem;cursor:pointer;background:transparent;border:1.5px solid;transition:filter .12s,background .12s;}
+.wrong-btn:hover{background:rgba(255,255,255,.07);}
+.none-btn{background:transparent;color:var(--ice);border:1.5px solid var(--ice);border-radius:8px;padding:9px 18px;font-weight:normal;cursor:pointer;font-size:.88rem;font-family:inherit;}
+.none-btn:hover{background:rgba(255,255,255,.05);}
+.award-section{margin-top:1.8vh;}
+.divider{width:80%;height:1px;background:rgba(255,255,255,.12);margin:1.4vh auto;}
+
+/* ── DAILY DOUBLE ── */
+.dd-badge{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:bold;color:var(--dd-gold);font-family:Cambria,Georgia,serif;text-align:center;letter-spacing:.05em;margin-bottom:.5rem;}
+.dd-subtext{text-align:center;color:var(--cream);font-size:.9rem;margin-bottom:1.4vh;}
+.wager-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:1rem 0;}
+.wager-btn{padding:10px 18px;border-radius:8px;background:var(--navy3);border:1.5px solid var(--dd-gold);color:var(--dd-gold);font-weight:bold;font-size:.9rem;cursor:pointer;font-family:inherit;transition:filter .12s,background .12s;}
+.wager-btn:hover{filter:brightness(1.2);background:var(--navy2);}
+.wager-input-wrap{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:.8rem;}
+.wager-input{background:var(--navy);border:1.5px solid var(--dd-gold);color:var(--dd-gold);border-radius:8px;padding:9px 14px;font-size:1.1rem;font-weight:bold;font-family:Cambria,Georgia,serif;width:140px;text-align:center;}
+.wager-input:focus{outline:none;border-color:#fff;}
+
+/* ── FINAL JEOPARDY ── */
+.fj-category{font-size:clamp(1.4rem,3vw,2rem);font-weight:bold;color:var(--dd-gold);font-family:Cambria,Georgia,serif;text-align:center;margin-bottom:.4rem;}
+.fj-instructions{text-align:center;color:var(--cream);font-size:.88rem;margin-bottom:1.4vh;line-height:1.5;}
+.fj-wager-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1.6vh;}
+.fj-player-row{background:var(--navy);border:1.5px solid;border-radius:10px;padding:10px 14px;}
+.fj-player-name{font-weight:bold;font-size:.88rem;margin-bottom:5px;}
+.fj-player-score{font-size:.8rem;color:var(--ice);margin-bottom:6px;}
+.fj-wager-input{background:transparent;border:none;border-bottom:1.5px solid;color:inherit;font-size:1rem;font-weight:bold;font-family:Cambria,Georgia,serif;width:100%;text-align:center;padding:4px 0;}
+.fj-wager-input:focus{outline:none;}
+.fj-reveal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:1.2vh;}
+.fj-result-row{background:var(--navy);border:1.5px solid;border-radius:10px;padding:10px 14px;text-align:center;}
+.fj-result-name{font-weight:bold;font-size:.88rem;margin-bottom:3px;}
+.fj-result-wager{font-size:.78rem;color:var(--ice);margin-bottom:8px;}
+.fj-result-btns{display:flex;gap:6px;justify-content:center;}
+.fj-correct-btn,.fj-wrong-btn{padding:7px 12px;border-radius:7px;font-weight:bold;font-size:.8rem;cursor:pointer;font-family:inherit;border:none;transition:filter .12s;}
+.fj-correct-btn{background:var(--green);color:#fff;}
+.fj-correct-btn:hover{filter:brightness(1.15);}
+.fj-wrong-btn{background:var(--brick);color:#fff;}
+.fj-wrong-btn:hover{filter:brightness(1.15);}
+.fj-correct-btn:disabled,.fj-wrong-btn:disabled{opacity:.4;cursor:default;}
+.fj-result-tag{font-size:.82rem;margin-top:5px;font-weight:bold;}
+
+/* ── SEQUENTIAL FJ WAGER ── */
+.fj-seq-notice{text-align:center;background:rgba(255,215,0,.08);border:1px solid var(--dd-gold);border-radius:8px;padding:9px 16px;font-size:.82rem;color:var(--dd-gold);margin-bottom:1.4vh;line-height:1.4;}
+.fj-seq-card{background:var(--navy);border-radius:12px;padding:2.2vh 2.5vw;text-align:center;margin-bottom:1.2vh;border:1.5px solid rgba(255,255,255,.08);}
+.fj-seq-name{font-size:clamp(1.3rem,2.6vw,1.8rem);font-weight:bold;font-family:Cambria,Georgia,serif;margin-bottom:.35rem;}
+.fj-seq-score{font-size:.82rem;color:var(--ice);margin-bottom:1.3vh;}
+.fj-seq-input-row{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;}
+.fj-locked-strip{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:1vh;}
+.fj-locked-pill{padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:bold;border:1.5px solid;}
+
+/* ── SOUND SETTINGS ── */
+.sound-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);}
+.sound-lbl{flex:0 0 148px;font-size:.82rem;font-weight:bold;color:var(--cream);}
+.sound-status{flex:1;font-size:.78rem;font-style:italic;}
+.sound-status.loaded{color:#6fcf97;}
+.sound-status.empty{color:rgba(255,255,255,.3);}
+.sound-file-input{display:none;}
+.sound-upload-btn{padding:6px 12px;border-radius:6px;background:var(--navy3);border:1px solid var(--gold);color:var(--gold);cursor:pointer;font-size:.76rem;font-family:inherit;white-space:nowrap;}
+.sound-upload-btn:hover{filter:brightness(1.2);}
+.sound-test-btn{padding:6px 10px;border-radius:6px;background:transparent;border:1px solid var(--ice);color:var(--ice);cursor:pointer;font-size:.76rem;font-family:inherit;}
+.sound-test-btn:hover{filter:brightness(1.2);}
+.sound-clear-btn{padding:6px 8px;border-radius:6px;background:transparent;border:1px solid #555;color:#888;cursor:pointer;font-size:.72rem;font-family:inherit;}
+.sound-clear-btn:hover{border-color:#e05c5c;color:#e05c5c;}
+.music-bar{display:flex;align-items:center;justify-content:center;gap:12px;margin:1.2vh 0;font-size:.82rem;color:var(--ice);}
+.music-indicator{display:flex;align-items:flex-end;gap:2px;height:20px;}
+.music-indicator span{width:3px;background:var(--dd-gold);border-radius:2px;animation:none;}
+.music-indicator.playing span{animation:musicBounce .5s ease-in-out infinite alternate;}
+.music-indicator span:nth-child(2){animation-delay:.1s;}
+.music-indicator span:nth-child(3){animation-delay:.2s;}
+.music-indicator span:nth-child(4){animation-delay:.15s;}
+.music-indicator span:nth-child(5){animation-delay:.05s;}
+@keyframes musicBounce{from{height:4px;}to{height:18px;}}
+
+/* ── SCOREBOARD PANEL ── */
+.panel-overlay{position:fixed;inset:0;background:rgba(4,10,18,.88);display:none;align-items:center;justify-content:center;z-index:60;padding:3vh 3vw;}
+.panel-overlay.active{display:flex;}
+.panel{background:var(--navy);border:2px solid var(--gold);border-radius:14px;width:min(1000px,95vw);max-height:90vh;overflow-y:auto;padding:3vh 3vw;}
+.panel h2{color:var(--gold);text-align:center;margin-bottom:.4rem;font-size:1.7rem;}
+.panel-sub{text-align:center;color:var(--ice);font-size:.82rem;margin-bottom:2vh;}
+.player-cards{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:2vh;}
+.pcard{flex:1 1 190px;max-width:230px;background:var(--navy2);border-radius:10px;overflow:hidden;border:2px solid var(--gold);}
+.pcard-head{padding:9px;text-align:center;font-weight:bold;color:#fff;font-size:.9rem;}
+.pcard-body{padding:14px 8px;text-align:center;}
+.pcard-score{font-family:Cambria,Georgia,serif;font-size:2.4rem;font-weight:bold;color:var(--cream);}
+.pcard-adj{display:flex;gap:5px;justify-content:center;margin-top:9px;flex-wrap:wrap;}
+.adj-btn{padding:5px 9px;border-radius:6px;font-size:.76rem;font-weight:bold;color:#fff;cursor:pointer;font-family:inherit;border:none;transition:filter .12s;}
+.adj-btn:hover{filter:brightness(1.15);}
+.adj-minus{background:#5a3a3a;}
+.adj-plus{background:var(--brick);}
+.pname-input{width:90%;margin-top:6px;padding:5px;border-radius:6px;border:1px solid var(--gold);background:var(--navy);color:var(--cream);text-align:center;font-size:.82rem;}
+.log-list{list-style:none;max-height:38vh;overflow-y:auto;}
+.log-list li{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.08);font-size:.87rem;display:flex;justify-content:space-between;gap:8px;}
+.log-empty{text-align:center;color:var(--ice);font-style:italic;padding:2vh 0;font-size:.9rem;}
+.panel-actions{display:flex;justify-content:center;gap:12px;margin-top:1.2vh;flex-wrap:wrap;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:3vh;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy3);border:1.5px solid var(--gold);color:var(--cream);padding:12px 28px;border-radius:50px;font-size:.92rem;font-weight:bold;z-index:200;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── PLAYER MANAGEMENT PANEL ── */
+.pm-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);}
+.pm-swatch{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.3);flex:0 0 auto;cursor:pointer;}
+.pm-name{flex:1;background:var(--navy);border:1px solid var(--gold);border-radius:7px;color:var(--cream);padding:7px 10px;font-size:.9rem;font-family:inherit;}
+.pm-name:focus{outline:none;border-color:#fff;}
+.pm-remove{background:var(--brick);color:#fff;border:none;border-radius:7px;padding:6px 10px;font-size:.8rem;font-weight:bold;cursor:pointer;font-family:inherit;}
+.pm-remove:hover{filter:brightness(1.15);}
+.pm-remove:disabled{opacity:.3;cursor:default;}
+.color-picker-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;}
+.color-dot{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .1s,border-color .1s;}
+.color-dot:hover{transform:scale(1.2);}
+.color-dot.selected{border-color:#fff;transform:scale(1.15);}
+.pm-add{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12);}
+.pm-warning{font-size:.78rem;color:var(--ice);font-style:italic;margin-top:4px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:720px){
+  .board-grid{gap:3px;}
+  .cell{font-size:clamp(1rem,5vw,1.6rem);}
+  .cat-hd{font-size:clamp(.58rem,1.8vw,.75rem);}
+  .fj-wager-grid,.fj-reveal-grid{grid-template-columns:1fr;}
+}
+
+/* ── PLAYER PHONE VIEW ── */
+#player-view{display:none;min-height:100vh;flex-direction:column;background:var(--navy);}
+.pv-header{background:var(--navy2);border-bottom:2px solid var(--gold);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
+.pv-name{font-size:1rem;font-weight:bold;color:var(--cream);}
+.pv-score{font-family:Cambria,Georgia,serif;font-size:1.6rem;font-weight:bold;color:var(--gold);}
+.pv-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;gap:20px;}
+.pv-state{width:100%;text-align:center;}
+.pv-msg{font-size:1rem;color:var(--ice);font-style:italic;line-height:1.5;}
+.pv-clue{font-family:Cambria,Georgia,serif;font-size:1.2rem;font-weight:bold;color:var(--cream);background:var(--navy2);border:1.5px solid var(--gold);border-radius:12px;padding:18px 16px;margin-bottom:20px;line-height:1.4;}
+.buzz-btn{width:100%;max-width:320px;height:160px;border-radius:20px;background:var(--brick);border:3px solid var(--gold);color:#fff;font-size:2.4rem;font-weight:bold;font-family:Cambria,Georgia,serif;letter-spacing:.08em;cursor:pointer;transition:transform .08s,filter .1s;box-shadow:0 8px 32px rgba(140,47,47,.4);}
+.buzz-btn:hover{filter:brightness(1.12);}
+.buzz-btn:active{transform:scale(.95);}
+.buzz-btn.pulsing{animation:buzzPulse 1.2s ease-in-out infinite;}
+.buzz-btn:disabled{background:#444;border-color:#666;color:#999;cursor:default;animation:none;box-shadow:none;}
+@keyframes buzzPulse{0%,100%{box-shadow:0 8px 32px rgba(140,47,47,.4);}50%{box-shadow:0 8px 48px rgba(200,70,70,.75),0 0 0 8px rgba(200,70,70,.15);}}
+.pv-buzz-result{font-size:1.3rem;font-weight:bold;font-family:Cambria,Georgia,serif;padding:24px;border-radius:14px;border:2px solid;}
+.pv-fj-label{font-size:1.5rem;font-weight:bold;color:var(--dd-gold);font-family:Cambria,Georgia,serif;margin-bottom:.4rem;}
+.pv-fj-sub{font-size:.88rem;color:var(--ice);margin-bottom:1.2rem;}
+.pv-success{color:#6fcf97;font-size:1.1rem;font-weight:bold;margin-bottom:.6rem;}
+.pv-supabase-note{font-size:.75rem;color:rgba(255,255,255,.3);margin-top:auto;padding:12px;text-align:center;}
+
+/* ── JOIN SCREEN ── */
+#pv-join-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--navy);}
+.pv-join-wrap{width:100%;max-width:380px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.pv-join-title{font-family:Cambria,Georgia,serif;font-size:1.7rem;font-weight:bold;color:var(--gold);letter-spacing:.06em;}
+.pv-join-sub{font-size:.9rem;color:var(--ice);}
+.pv-join-name{width:100%;padding:14px;border-radius:10px;border:1.5px solid var(--gold);background:var(--navy2);color:var(--cream);font-size:1.1rem;font-family:inherit;text-align:center;}
+.pv-join-name:focus{outline:none;border-color:#fff;}
+.pv-join-color-label{font-size:.82rem;color:var(--ice);margin-bottom:-8px;}
+.pv-join-btn{width:100%;padding:16px;border-radius:12px;background:var(--brick);border:2px solid var(--gold);color:#fff;font-size:1.1rem;font-weight:bold;font-family:Cambria,Georgia,serif;cursor:pointer;letter-spacing:.04em;}
+.pv-join-btn:hover{filter:brightness(1.12);}
+.pv-join-error{color:#e05c5c;font-size:.85rem;min-height:20px;}
+.pv-change-player{font-size:.75rem;color:rgba(255,255,255,.3);cursor:pointer;margin-top:4px;}
+.pv-change-player:hover{color:var(--ice);}
+
+/* ── BUZZ DISPLAY (host clue modal) ── */
+.buzz-section{margin-top:1.6vh;border-top:1px solid rgba(255,255,255,.1);padding-top:1.4vh;}
+.buzz-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:.9vh;}
+.buzz-toolbar-lbl{font-size:.8rem;color:var(--ice);font-weight:bold;letter-spacing:.06em;}
+.buzz-open-btn{background:var(--green);color:#fff;border:none;border-radius:7px;padding:7px 14px;font-weight:bold;font-size:.8rem;cursor:pointer;font-family:inherit;}
+.buzz-open-btn.active{background:var(--brick);}
+.buzz-open-btn:hover{filter:brightness(1.13);}
+.buzz-list{display:flex;flex-direction:column;gap:6px;}
+.buzz-item{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:8px;background:var(--navy);}
+.buzz-rank{font-weight:bold;font-size:.9rem;color:var(--gold);width:22px;flex:0 0 auto;}
+.buzz-name{font-weight:bold;font-size:.95rem;}
+.buzz-time{font-size:.72rem;color:var(--ice);margin-left:auto;}
+.buzz-empty{font-size:.82rem;color:var(--ice);font-style:italic;text-align:center;padding:.8vh 0;}
+
+/* ── FJ WAGER WAITING (Supabase mode) ── */
+.fj-waiting{text-align:center;padding:1.4vh 0;}
+.fj-waiting-count{font-size:2.2rem;font-weight:bold;font-family:Cambria,Georgia,serif;color:var(--dd-gold);margin-bottom:.4rem;}
+.fj-waiting-sub{font-size:.88rem;color:var(--ice);margin-bottom:1.4vh;}
+.fj-waiting-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:1.6vh;}
+
+/* ── PLAYER LINKS PANEL ── */
+.plink-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.08);}
+.plink-name{flex:0 0 140px;font-weight:bold;font-size:.88rem;}
+.plink-url{flex:1;background:var(--navy);border:1px solid var(--navy3);border-radius:6px;color:var(--cream);padding:6px 10px;font-size:.74rem;font-family:monospace;cursor:text;}
+.plink-copy{padding:5px 10px;border-radius:6px;background:var(--green);border:none;color:#fff;font-size:.74rem;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.plink-copy:hover{filter:brightness(1.13);}
+.plink-base-row{display:flex;gap:8px;align-items:center;margin-bottom:1.2vh;}
+.plink-base-input{flex:1;background:var(--navy);border:1px solid var(--gold);border-radius:7px;color:var(--cream);padding:8px 12px;font-size:.85rem;font-family:monospace;}
+.plink-base-input:focus{outline:none;border-color:#fff;}
+.plink-note{font-size:.78rem;color:var(--ice);margin-bottom:1.2vh;line-height:1.5;}
+
+/* ── ANSWERS VIEW ── */
+#answers-view{min-height:100vh;background:var(--navy);padding:2vh 2vw;overflow-y:auto;}
+.av-topbar{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--gold);padding-bottom:10px;margin-bottom:1.4vh;flex-wrap:wrap;gap:8px;}
+.av-title{color:var(--gold);font-size:1.1rem;font-weight:bold;font-family:Cambria,Georgia,serif;letter-spacing:.06em;}
+.av-subtitle{color:var(--ice);font-size:.78rem;font-style:italic;margin-top:3px;}
+.av-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1.6vh;}
+.av-cat-hd{background:var(--brick);color:#fff;text-align:center;font-weight:bold;font-size:.8rem;padding:8px 5px;border-radius:5px;margin-bottom:5px;line-height:1.35;}
+.av-tile{background:var(--navy2);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 10px;margin-bottom:5px;}
+.av-tile.av-dd{border-color:var(--dd-gold);background:#0e2a10;}
+.av-tile.av-used{opacity:.38;}
+.av-val{font-weight:bold;font-size:.8rem;color:var(--gold);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+.av-dd-tag{background:var(--dd-gold);color:#000;font-size:.6rem;font-weight:bold;padding:1px 5px;border-radius:3px;}
+.av-used-tag{background:#2a3a4c;color:#4a6070;font-size:.6rem;padding:1px 5px;border-radius:3px;}
+.av-clue{color:var(--ice);font-size:.72rem;line-height:1.35;margin-bottom:5px;}
+.av-answer{color:#6fcf97;font-weight:bold;font-size:.83rem;line-height:1.3;}
+.av-fj{background:linear-gradient(135deg,var(--fj-purple) 0%,var(--navy2) 100%);border:2px solid var(--dd-gold);border-radius:10px;padding:18px 22px;}
+.av-fj-cat{color:var(--dd-gold);font-weight:bold;font-size:1rem;margin-bottom:6px;letter-spacing:.06em;font-family:Cambria,Georgia,serif;}
+.av-fj-clue{color:var(--cream);font-size:.9rem;line-height:1.5;margin-bottom:10px;}
+.av-fj-answer{color:#6fcf97;font-weight:bold;font-size:1.05rem;}
+.av-legend{display:flex;gap:14px;font-size:.74rem;color:var(--ice);align-items:center;}
+.av-legend span{display:flex;align-items:center;gap:5px;}
+</style>
+</head>
+<body>
+
+<!-- TITLE -->
+<div id="screen-title" class="screen active">
+  <div class="title-disc">
+    <div class="t-usa">GAME</div>
+    <div class="t-geo">DAWGS</div>
+    <div class="t-rule"></div>
+    <div class="t-jep">JEOPARDY</div>
+    <div class="t-tag">Hosted live on Discord &nbsp;•&nbsp; Daily Doubles &nbsp;•&nbsp; Final Jeopardy</div>
+    <button class="btn btn-brick" style="margin-top:6px;" onclick="go('board')">ENTER THE GAME</button>
+  </div>
+</div>
+
+<!-- BOARD -->
+<div id="screen-board" class="screen">
+  <div class="board-topbar">
+    <h1>GAME DAWGS — JEOPARDY</h1>
+    <div class="topbar-btns">
+      <button class="btn btn-green btn-sm" onclick="openPanel('score')">SCOREBOARD</button>
+      <button class="btn btn-outline btn-sm" onclick="openPanel('log')">GAME LOG</button>
+      <button class="btn btn-outline btn-sm" onclick="openPlayersPanel()">PLAYERS</button>
+      <button class="btn btn-outline btn-sm" onclick="openSoundPanel()">🔊 SOUNDS</button>
+      <button class="btn btn-outline btn-sm" id="playerLinksBtn" onclick="openPlayerLinksPanel()" style="display:none">📱 PLAYER LINKS</button>
+      <button class="btn btn-outline btn-sm" onclick="confirmReset()">RESET</button>
+    </div>
+  </div>
+  <div class="score-strip" id="scoreStrip"></div>
+  <div class="board-grid" id="boardGrid"></div>
+  <div class="fj-btn-wrap">
+    <button class="btn btn-purple" onclick="startFinalJeopardy()">⭐ FINAL JEOPARDY</button>
+  </div>
+  <div class="board-footer">Click a tile • Daily Doubles hidden on board • Final Jeopardy when ready</div>
+</div>
+
+<!-- CLUE MODAL -->
+<div class="overlay" id="clueOverlay">
+  <div class="modal" id="clueModal">
+    <div class="eyebrow" id="clueEyebrow"></div>
+    <div class="clue-text" id="clueText"></div>
+    <div id="answerBlock" style="display:none">
+      <div class="ans-label">ANSWER</div>
+      <div class="ans-text" id="answerText"></div>
+    </div>
+    <div class="modal-actions" id="revealActions">
+      <button class="btn btn-brick" onclick="revealAnswer()">REVEAL ANSWER</button>
+      <button class="btn btn-outline" onclick="closeClue(false)">BACK TO BOARD (skip)</button>
+    </div>
+    <div id="awardSection" style="display:none">
+      <div class="award-section">
+        <div class="award-label">Who got it right? (awards points &amp; closes tile)</div>
+        <div class="award-grid" id="awardGrid"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="award-section">
+        <div class="award-label">Wrong answer? (deducts points, tile stays open)</div>
+        <div class="award-grid" id="wrongGrid"></div>
+      </div>
+      <div style="text-align:center;margin-top:14px;">
+        <button class="none-btn" onclick="closeClue(true)">No one scored — back to board</button>
+      </div>
+    </div>
+    <!-- BUZZ SECTION (shown when Supabase configured) -->
+    <div class="buzz-section" id="buzzSection" style="display:none">
+      <div class="buzz-toolbar">
+        <span class="buzz-toolbar-lbl">BUZZ ORDER</span>
+        <button class="buzz-open-btn" id="buzzOpenBtn" onclick="toggleBuzz()">🔔 Open Buzz Window</button>
+      </div>
+      <div class="buzz-list" id="buzzList">
+        <div class="buzz-empty">Click "Open Buzz Window" to let players buzz in.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DAILY DOUBLE MODAL -->
+<div class="overlay" id="ddOverlay">
+  <div class="modal dd-modal" id="ddModal">
+    <div class="eyebrow dd-eye">✦ &nbsp; DAILY DOUBLE &nbsp; ✦</div>
+    <div id="ddWagerPhase">
+      <div class="dd-badge">DAILY DOUBLE!</div>
+      <div class="dd-subtext" id="ddWagerSubtext">Place your wager before the clue is revealed.</div>
+      <div class="wager-row" id="ddQuickWagers"></div>
+      <div class="wager-input-wrap">
+        <input class="wager-input" id="ddWagerInput" type="number" min="0" placeholder="Custom $" />
+        <button class="btn btn-gold" onclick="confirmDDWager()">LOCK IN WAGER</button>
+      </div>
+    </div>
+    <div id="ddCluePhase" style="display:none">
+      <div class="eyebrow dd-eye" id="ddClueEyebrow"></div>
+      <div class="clue-text" id="ddClueText"></div>
+      <div id="ddAnswerBlock" style="display:none">
+        <div class="ans-label">ANSWER</div>
+        <div class="ans-text" id="ddAnswerText"></div>
+      </div>
+      <div class="modal-actions" id="ddRevealActions">
+        <button class="btn btn-gold" style="border-color:var(--dd-gold)" onclick="revealDDAnswer()">REVEAL ANSWER</button>
+      </div>
+      <div id="ddAwardSection" style="display:none;margin-top:1.8vh;">
+        <div class="award-label" id="ddAwardLabel"></div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap" id="ddAwardBtns"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL JEOPARDY MODAL -->
+<div class="overlay" id="fjOverlay">
+  <div class="modal fj-modal" id="fjModal">
+    <div class="eyebrow fj-eye">⭐ &nbsp; FINAL JEOPARDY &nbsp; ⭐</div>
+    <div id="fjWagerPhase">
+      <div class="fj-category" id="fjCategoryLabel"></div>
+      <!-- Supabase mode: players wager on their own devices -->
+      <div id="fjWagerWaiting" style="display:none">
+        <div class="fj-waiting">
+          <div class="fj-waiting-count"><span id="fjWagerCount">0</span>/<span id="fjWagerTotal">4</span></div>
+          <div class="fj-waiting-sub">Players wagering on their devices — waiting for all submissions...</div>
+          <div class="fj-waiting-pills" id="fjWagerPills"></div>
+          <button class="btn btn-gold" id="fjRevealBtn" style="border-color:var(--dd-gold);opacity:.4;cursor:not-allowed" disabled onclick="startFJThinkPhase()">REVEAL THE CLUE</button>
+        </div>
+      </div>
+      <!-- Local mode: sequential wager entry (when no Supabase) -->
+      <div id="fjSeqWager">
+        <div class="fj-seq-notice">👁 Only the wagering player should be looking at the screen right now. Everyone else look away!</div>
+        <div class="fj-seq-card" id="fjSeqCard"></div>
+        <div class="fj-locked-strip" id="fjLockedStrip"></div>
+      </div>
+      <div id="fjAllLocked" style="display:none">
+        <div class="fj-instructions">All wagers locked in! Host — click when everyone is ready.</div>
+        <div class="fj-locked-strip" id="fjLockedStripFinal"></div>
+        <div style="text-align:center;margin-top:1.8vh;">
+          <button class="btn btn-gold" style="border-color:var(--dd-gold);font-size:1rem;padding:14px 28px;" onclick="startFJThinkPhase()">REVEAL THE CLUE</button>
+        </div>
+      </div>
+    </div>
+    <div id="fjThinkPhase" style="display:none">
+      <div class="clue-text" id="fjClueText"></div>
+      <div class="music-bar" id="musicBar">
+        <div class="music-indicator" id="musicIndicator">
+          <span style="height:6px"></span><span style="height:10px"></span><span style="height:14px"></span><span style="height:8px"></span><span style="height:12px"></span>
+        </div>
+        <span id="musicTimerLabel">Think music playing… 30s</span>
+        <div class="music-indicator" id="musicIndicator2">
+          <span style="height:12px"></span><span style="height:8px"></span><span style="height:14px"></span><span style="height:10px"></span><span style="height:6px"></span>
+        </div>
+      </div>
+      <div style="text-align:center;margin-bottom:1.4vh;">
+        <button class="btn btn-gold" style="border-color:var(--dd-gold);font-size:.85rem;padding:10px 20px;" onclick="stopFJMusic()">TIME'S UP — REVEAL ANSWERS</button>
+      </div>
+      <div id="fjAnswerBlock" style="display:none">
+        <div class="ans-label">ANSWER</div>
+        <div class="ans-text" id="fjAnswerText"></div>
+        <div class="fj-reveal-grid" id="fjRevealGrid"></div>
+        <div style="text-align:center;margin-top:1.6vh;">
+          <button class="btn btn-gold" style="border-color:var(--dd-gold)" onclick="closeFJ()">FINISH — BACK TO BOARD</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCOREBOARD PANEL -->
+<div class="panel-overlay" id="scorePanel">
+  <div class="panel">
+    <h2>SCOREBOARD</h2>
+    <div class="panel-sub">Tap +/- to adjust manually. Scores update automatically as you play.</div>
+    <div class="player-cards" id="playerCards"></div>
+    <div class="panel-actions">
+      <button class="btn btn-gold" onclick="closePanel('scorePanel')">BACK TO BOARD</button>
+      <button class="btn btn-brick" onclick="switchPanel('log')">VIEW GAME LOG</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOG PANEL -->
+<div class="panel-overlay" id="logPanel">
+  <div class="panel">
+    <h2>GAME LOG</h2>
+    <div class="panel-sub">Every point awarded and deducted, in order.</div>
+    <ul class="log-list" id="logList"></ul>
+    <div class="panel-actions">
+      <button class="btn btn-gold" onclick="switchPanel('score')">BACK TO SCOREBOARD</button>
+      <button class="btn btn-outline" onclick="closePanel('logPanel')">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYERS PANEL -->
+<div class="panel-overlay" id="playersPanel">
+  <div class="panel" style="max-width:560px;">
+    <h2>PLAYERS</h2>
+    <div class="panel-sub">Add or remove players, edit names, and pick colors. Name changes apply instantly. Adding or removing a player resets all scores.</div>
+    <div id="pmList"></div>
+    <div class="pm-add">
+      <button class="btn btn-green btn-sm" id="pmAddBtn" onclick="addPlayer()">+ Add Player</button>
+      <span class="pm-warning" id="pmAddNote"></span>
+    </div>
+    <div class="panel-actions" style="margin-top:1.6vh;">
+      <button class="btn btn-gold" onclick="closePanel('playersPanel')">DONE — BACK TO BOARD</button>
+    </div>
+  </div>
+</div>
+
+<!-- SOUND SETTINGS PANEL -->
+<div class="panel-overlay" id="soundPanel">
+  <div class="panel" style="max-width:620px;">
+    <h2>🔊 SOUND SETTINGS</h2>
+    <div class="panel-sub">Upload an MP3 for each sound. Files are saved in your browser so you only upload once — they'll be there next game night too. Keep files under 2MB each.</div>
+    <div id="soundRows"><!-- filled by JS --></div>
+    <div class="panel-actions" style="margin-top:1.6vh;">
+      <button class="btn btn-gold" onclick="closePanel('soundPanel')">CLOSE</button>
+      <button class="btn btn-outline" onclick="clearAllSounds()">RESET TO SYNTHESIZED</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER LINKS PANEL -->
+<div class="panel-overlay" id="playerLinksPanel">
+  <div class="panel" style="max-width:640px;">
+    <h2>📱 PLAYER LINKS</h2>
+    <div class="panel-sub">One link for everyone — paste it in Discord, all players click the same URL, each enters their own name and color. No separate links, no confusion.</div>
+    <div class="plink-note">Enter your Vercel URL to generate the share link:</div>
+    <div class="plink-base-row">
+      <input class="plink-base-input" id="plinkBase" placeholder="https://your-game.vercel.app" oninput="renderPlayerLinks()" />
+    </div>
+    <div id="plinkRows"><!-- filled by JS --></div>
+    <div class="panel-actions" style="margin-top:1.6vh;">
+      <button class="btn btn-gold" onclick="closePanel('playerLinksPanel')">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER VIEW (phone/device) — all players use same ?join URL -->
+<div id="player-view">
+
+  <!-- JOIN SCREEN — shown until player enters name -->
+  <div id="pv-join-screen" style="display:none">
+    <div class="pv-join-wrap">
+      <div class="pv-join-title">⚡ GAME DAWGS</div>
+      <div class="pv-join-sub">Enter your name to join the game</div>
+      <input class="pv-join-name" id="pvJoinName" placeholder="Your name" maxlength="28"
+        onkeydown="if(event.key==='Enter')pvJoin()" />
+      <div class="pv-join-color-label">Pick your color</div>
+      <div class="color-picker-row" id="pvColorPicker" style="justify-content:center;margin-top:4px;"></div>
+      <button class="pv-join-btn" onclick="pvJoin()">JOIN GAME →</button>
+      <div class="pv-join-error" id="pvJoinError"></div>
+    </div>
+  </div>
+
+  <!-- GAME UI — shown after name is set -->
+  <div id="pv-game-ui" style="display:none; flex:1; flex-direction:column;">
+    <div class="pv-header">
+      <div class="pv-name" id="pvName">—</div>
+      <div class="pv-score" id="pvScore">$0</div>
+    </div>
+    <div class="pv-body">
+      <div id="pv-lobby" class="pv-state">
+        <div class="pv-msg">Waiting for a question...<br>You'll see a BUZZ button when one opens.</div>
+      </div>
+      <div id="pv-buzz" class="pv-state" style="display:none">
+        <div class="pv-clue" id="pvClueText"></div>
+        <button class="buzz-btn pulsing" id="pvBuzzBtn" onclick="submitBuzz()">BUZZ!</button>
+      </div>
+      <div id="pv-buzzed" class="pv-state" style="display:none">
+        <div class="pv-buzz-result" id="pvBuzzResult"></div>
+      </div>
+      <div id="pv-fj-wager" class="pv-state" style="display:none">
+        <div class="pv-fj-label">⭐ FINAL JEOPARDY</div>
+        <div class="pv-fj-sub" id="pvFJSub"></div>
+        <input class="wager-input" id="pvWagerInput" type="number" min="0" placeholder="Your wager $"
+          style="width:180px;display:block;margin:0 auto 16px;" />
+        <button class="btn btn-gold" style="border-color:var(--dd-gold)" onclick="submitPlayerWager()">LOCK IN WAGER</button>
+      </div>
+      <div id="pv-fj-submitted" class="pv-state" style="display:none">
+        <div class="pv-success">✓ Wager locked in!</div>
+        <div class="pv-msg">Waiting for everyone else...</div>
+      </div>
+      <div id="pv-fj-think" class="pv-state" style="display:none">
+        <div class="pv-clue" id="pvFJClue"></div>
+        <div class="pv-msg" style="font-size:1.3rem">🤔 Think!</div>
+      </div>
+    </div>
+    <div class="pv-supabase-note" id="pvNote"></div>
+    <div class="pv-change-player" onclick="pvClearIdentity()">Not you? Tap to change name</div>
+  </div>
+
+</div>
+
+<!-- ANSWERS VIEW (open via ?answers URL param) -->
+<div id="answers-view" style="display:none">
+  <div class="av-topbar">
+    <div>
+      <div class="av-title">🔐 HOST ANSWER KEY — GAME DAWGS JEOPARDY</div>
+      <div class="av-subtitle">Keep this tab on your screen only. Daily Doubles and used tiles update live from game state.</div>
+    </div>
+    <div class="av-legend">
+      <span><span class="av-dd-tag">DD</span> Daily Double</span>
+      <span><span class="av-used-tag">USED</span> Tile played</span>
+    </div>
+  </div>
+  <div class="av-grid" id="avGrid"></div>
+  <div class="av-fj" id="avFJ"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   SUPABASE CONFIG
+   ─────────────────────────────────────────
+   Replace the two values below with your
+   Supabase project URL and anon key, then
+   deploy to Vercel. Leave as-is to play
+   locally without real-time features.
+═══════════════════════════════════════════ */
+const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+const SB_OK = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON !== 'YOUR_SUPABASE_ANON_KEY';
+const sb = SB_OK ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+
+/* ── VIEW DETECTION ── */
+const _params = new URLSearchParams(window.location.search);
+const VIEW = _params.has('join') ? 'player' : _params.has('answers') ? 'answers' : 'host';
+// Player identity stored in localStorage so they only enter name once
+let PV_NAME  = localStorage.getItem('jep_pv_name')  || '';
+let PV_COLOR = localStorage.getItem('jep_pv_color') || '#C9A227';
+
+/* ── SUPABASE REALTIME CHANNEL ── */
+let sbChannel = null;
+let buzzIsOpen = false;
+let fjWagerReceived = {}; // {playerName: amount}
+
+function sbSetup(){
+  if(!SB_OK) return;
+  sbChannel = sb.channel('game-dawgs-jeopardy-v1', {
+    config:{ broadcast:{ self: false } }
+  });
+  if(VIEW === 'host'){
+    sbChannel
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'jeopardy_buzzes'},
+        p => hostHandleBuzz(p.new))
+      .on('postgres_changes',{event:'INSERT',schema:'public',table:'jeopardy_wagers'},
+        p => hostHandleWager(p.new))
+      .on('postgres_changes',{event:'UPDATE',schema:'public',table:'jeopardy_wagers'},
+        p => hostHandleWager(p.new));
+  } else {
+    sbChannel
+      .on('broadcast',{event:'buzz_open'},  p => pvSetState('buzz', p.payload))
+      .on('broadcast',{event:'buzz_closed'},   () => pvSetState('lobby'))
+      .on('broadcast',{event:'fj_start'},   p => pvSetState('fj_wager', p.payload))
+      .on('broadcast',{event:'fj_clue'},    p => pvSetState('fj_think', p.payload))
+      .on('broadcast',{event:'scores'},     p => pvUpdateScore(p.payload));
+  }
+  sbChannel.subscribe();
+}
+
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+const CATS = ["BREAKING BAD","NFL QUARTERBACKS","POTENT POTABLES","EUROPEAN GEOGRAPHY","PGA TOUR"];
+const VALS = [100,200,300,400,500];
+const QA = {
+  "BREAKING BAD":{
+    100:{c:"This is the name of Walter White's former student and reluctant meth-cooking partner, played by Aaron Paul across all five seasons.",a:"Who is Jesse Pinkman?"},
+    200:{c:"Walter White adopts this pseudonym — the surname of a Nobel Prize-winning German physicist — as his drug kingpin alter ego throughout the series.",a:"Who is Heisenberg?"},
+    300:{c:"Gustavo Fring uses this fast food chicken restaurant chain as the legitimate front for his regional drug distribution network across the American Southwest.",a:"What is Los Pollos Hermanos?"},
+    400:{c:"Walter White allows this woman — Jesse's girlfriend and a recovering addict — to choke to death in her sleep rather than intervening, a decision that haunts Jesse for the remainder of the series.",a:"Who is Jane Margolis?"},
+    500:{c:"Gustavo Fring's personal vendetta against the Juarez cartel traces back to the murder of this man — his business partner in Chile, whom he regarded as far more than a colleague.",a:"Who is Maximino Arciniega (Max)?"}
+  },
+  "NFL QUARTERBACKS":{
+    100:{c:"This quarterback won a record seven Super Bowl championships — six with the New England Patriots and one with the Tampa Bay Buccaneers.",a:"Who is Tom Brady?"},
+    200:{c:"This New Orleans Saints quarterback set the NFL record for most consecutive games with a touchdown pass at 54, a mark he held until his retirement.",a:"Who is Drew Brees?"},
+    300:{c:"Peyton Manning set the NFL single-season record for touchdown passes in 2013. How many did he throw?",a:"What is 55?"},
+    400:{c:"This Pittsburgh Steelers quarterback won four Super Bowl championships in six seasons during the 1970s, earning Super Bowl MVP honors twice.",a:"Who is Terry Bradshaw?"},
+    500:{c:"This San Francisco 49ers quarterback is the only player in NFL history to win the Super Bowl MVP award three times, achieving the feat across four Super Bowl victories.",a:"Who is Joe Montana?"}
+  },
+  "POTENT POTABLES":{
+    100:{c:"This agave-based spirit, produced primarily in the Jalisco region of Mexico and named for the city near its origin, is the base liquor in a margarita.",a:"What is tequila?"},
+    200:{c:"This French grape-based brandy must be aged at least two years in French oak barrels and produced in a specific region of southwestern France to legally carry its name.",a:"What is Cognac?"},
+    300:{c:"This bourbon-based cocktail — served over crushed ice with fresh mint and simple syrup — has been the official drink of the Kentucky Derby at Churchill Downs since the 1930s.",a:"What is a Mint Julep?"},
+    400:{c:"This Italian digestif, distilled from the grape skins, seeds, and stems left over after winemaking, is classified as a pomace brandy and typically ranges from 35 to 60 percent alcohol.",a:"What is grappa?"},
+    500:{c:"This specific fermentation method — used in Belgian lambic brewing — relies on wild airborne yeast and bacteria rather than cultivated strains, producing the distinctively sour and funky flavor the style is known for.",a:"What is spontaneous fermentation?"}
+  },
+  "EUROPEAN GEOGRAPHY":{
+    100:{c:"This mountain range forms the natural border between France and Spain and contains the tiny landlocked nation of Andorra nestled within its peaks.",a:"What are the Pyrenees?"},
+    200:{c:"This European capital, built on seven hills and bisected by the Tiber River, is the only major city in the world to contain an independent nation — Vatican City — entirely within its boundaries.",a:"What is Rome?"},
+    300:{c:"This narrow strait separating England from France at its closest point spans just 21 miles and connects the North Sea to the broader English Channel.",a:"What is the Strait of Dover?"},
+    400:{c:"This European microstate, completely surrounded by Italy and perched atop Mount Titano, claims to be the world's oldest republic, with a founding date of 301 AD.",a:"What is San Marino?"},
+    500:{c:"The Sognefjord in Norway stretches over 127 miles inland and reaches depths of more than 4,000 feet, making it the longest and deepest example of this type of glacially carved coastal inlet in all of Europe.",a:"What is a fjord?"}
+  },
+  "PGA TOUR":{
+    100:{c:"This golfer, nicknamed The Golden Bear, won 18 major championships across his career — more than any player in the history of professional golf.",a:"Who is Jack Nicklaus?"},
+    200:{c:"Augusta National Golf Club, the home of The Masters tournament held each April, is located in this U.S. state.",a:"What is Georgia?"},
+    300:{c:"This annual PGA Tour event held at Pebble Beach Golf Links features a unique pro-am format played across three courses including Spyglass Hill and Monterey Peninsula Country Club.",a:"What is the AT&T Pebble Beach Pro-Am?"},
+    400:{c:"Winning all four major championships at least once across a career is known by this name — an achievement Phil Mickelson completed in 2021 when he won the PGA Championship.",a:"What is the Career Grand Slam?"},
+    500:{c:"Amen Corner, the most celebrated and strategically critical stretch of holes at Augusta National, consists of holes 11, 12, and this hole number.",a:"What is 13?"}
+  }
+};
+const FJ = {
+  category:"COLLEGE FOOTBALL COACHES",
+  c:"This coach won seven national championships across his career — one at LSU in 2003 and six at Alabama from 2009 to 2020 — making him the only head coach in college football history to win titles at two different SEC programs.",
+  a:"Who is Nick Saban?"
+};
+const DEFAULT_PLAYERS=[
+  {name:"Madison Gibson",color:"#8C2F2F",score:0},
+  {name:"Austin Serhoff",color:"#3B6B4A",score:0},
+  {name:"Clayton Webb",color:"#5B3A8E",score:0},
+  {name:"Chris Dohauser",color:"#1C6E8C",score:0}
+];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+const SKEY = "usGeoJep_v3";
+let S = load();
+function load(){
+  try{const r=localStorage.getItem(SKEY);if(r){const p=JSON.parse(r);if(p&&p.players&&p.used&&p.log&&p.dd)return p;}}catch(e){}
+  return fresh();
+}
+function fresh(){return{players:JSON.parse(JSON.stringify(DEFAULT_PLAYERS)),used:{},log:[],dd:pickDD()};}
+function save(){try{localStorage.setItem(SKEY,JSON.stringify(S));}catch(e){}}
+function pickDD(){
+  // pick 2 random cells for Daily Doubles (must be different)
+  const all=[];
+  CATS.forEach((c,ci)=>VALS.forEach((v,vi)=>all.push([ci,vi])));
+  const shuffle=arr=>{for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;};
+  const picked=shuffle(all).slice(0,2);
+  const out={};picked.forEach(([ci,vi])=>{out[ci+'_'+vi]=true;});
+  return out;
+}
+function isDD(ci,vi){return !!S.dd[ci+'_'+vi];}
+function cellKey(cat,val){return cat+'::'+val;}
+
+let curCell=null; // {cat,val,ci,vi}
+let ddWager=0;
+let fjWagers={};
+
+/* ═══════════════════════════════════════════
+   SCREENS
+═══════════════════════════════════════════ */
+function go(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  if(name==='board'){applyBoardBg();renderBoard();renderStrip();}
+}
+
+/* ═══════════════════════════════════════════
+   BOARD BACKGROUND — tiled GAME DAWGS
+═══════════════════════════════════════════ */
+function applyBoardBg(){
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="420" height="150">
+    <text x="210" y="108" font-family="Impact,'Arial Black',sans-serif" font-size="72" font-weight="900"
+      fill="rgba(201,162,39,0.055)" letter-spacing="3" text-anchor="middle"
+      transform="rotate(-14,210,75)">GAME DAWGS</text>
+  </svg>`;
+  const el=document.getElementById('screen-board');
+  el.style.backgroundImage='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
+  el.style.backgroundRepeat='repeat';
+  el.style.backgroundSize='420px 150px';
+}
+
+/* ═══════════════════════════════════════════
+   SOUND ENGINE
+   Priority: custom URL → synthesized fallback
+═══════════════════════════════════════════ */
+const SOUND_DEFS = [
+  {key:'correct',   label:'Correct Answer'},
+  {key:'wrong',     label:'Wrong Answer'},
+  {key:'tile',      label:'Tile Click'},
+  {key:'dd',        label:'Daily Double Fanfare'},
+  {key:'reveal',    label:'Reveal Answer'},
+  {key:'fjfanfare', label:'Final Jeopardy Intro'},
+  {key:'fjthink',   label:'Think Music (30s)'},
+];
+const SKEY_SOUNDS = 'jeopardySounds_v1';
+const SKEY_VOLS   = 'jeopardySoundVols_v1';
+let soundURLs = {};
+let soundVols = {}; // per-sound volume 0–1, default 0.85
+let customAudioEl = null;
+let fjCustomPlaying = false;
+
+function loadSoundSettings(){
+  try{const r=localStorage.getItem(SKEY_SOUNDS);if(r)soundURLs=JSON.parse(r);}catch(e){}
+  try{const r=localStorage.getItem(SKEY_VOLS);if(r)soundVols=JSON.parse(r);}catch(e){}
+}
+function saveSoundSettings(){
+  try{localStorage.setItem(SKEY_SOUNDS,JSON.stringify(soundURLs));}catch(e){
+    showToast('Storage full — try smaller audio files.');
+  }
+}
+function clearAllSounds(){
+  soundURLs={};soundVols={};
+  try{localStorage.removeItem(SKEY_SOUNDS);localStorage.removeItem(SKEY_VOLS);}catch(e){}
+  renderSoundRows();
+  showToast('Reset to synthesized sounds.');
+}
+
+async function uploadSoundFile(key, input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>3*1024*1024){
+    showToast('File too large (max 3MB). Try a shorter/compressed MP3.');
+    input.value='';return;
+  }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    soundURLs[key]=e.target.result;
+    if(soundVols[key]===undefined) soundVols[key]=0.85; // default 85%
+    saveSoundSettings();
+    try{localStorage.setItem(SKEY_VOLS,JSON.stringify(soundVols));}catch(e){}
+    renderSoundRows();
+    showToast(`✓ Loaded: ${file.name}`);
+  };
+  reader.readAsDataURL(file);
+}
+function clearOneSound(key){
+  delete soundURLs[key];saveSoundSettings();renderSoundRows();
+}
+function setSoundVol(key,val){
+  soundVols[key]=parseFloat(val);
+  try{localStorage.setItem(SKEY_VOLS,JSON.stringify(soundVols));}catch(e){}
+}
+
+function playCustomURL(key){
+  const url=soundURLs[key];if(!url)return false;
+  const vol=soundVols[key]!==undefined?soundVols[key]:0.85;
+  try{
+    const a=new Audio(url);a.volume=Math.max(0,Math.min(1,vol));
+    a.play().catch(()=>{});
+    return true;
+  }catch(e){return false;}
+}
+function playSound(key){
+  if(soundURLs[key]&&soundURLs[key].trim()){playCustomURL(key);}
+  else{synthSound(key);}
+}
+
+function stopCustomAudio(){
+  if(customAudioEl){try{customAudioEl.pause();customAudioEl.currentTime=0;}catch(e){}customAudioEl=null;}
+  fjCustomPlaying=false;
+}
+
+/* ── WEB AUDIO CONTEXT ── */
+let audioCtx=null;
+function getCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+/* ── SYNTHESIZED FALLBACKS ── */
+function synthSound(key){
+  switch(key){
+    case 'correct':   synthCorrect(); break;
+    case 'wrong':     synthWrong(); break;
+    case 'tile':      synthTile(); break;
+    case 'dd':        synthDD(); break;
+    case 'reveal':    synthReveal(); break;
+    case 'fjfanfare': synthFJFanfare(); break;
+  }
+  // fjthink handled separately in startFJMusic
+}
+
+function synthCorrect(){
+  const ctx=getCtx(),t=ctx.currentTime;
+  // Bright 4-note ascending chime
+  [[523.25,0,0.18],[659.25,0.13,0.18],[783.99,0.26,0.22],[1046.5,0.39,0.35]].forEach(([f,d,dur])=>{
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sine';o.frequency.value=f;
+    g.gain.setValueAtTime(0,t+d);g.gain.linearRampToValueAtTime(.32,t+d+.03);
+    g.gain.exponentialRampToValueAtTime(.001,t+d+dur);
+    o.start(t+d);o.stop(t+d+dur+.02);
+  });
+}
+
+function synthWrong(){
+  const ctx=getCtx(),t=ctx.currentTime;
+  // Double descending buzz
+  [[220,0],[180,0.18]].forEach(([f,d])=>{
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sawtooth';
+    o.frequency.setValueAtTime(f,t+d);
+    o.frequency.exponentialRampToValueAtTime(f*0.6,t+d+.28);
+    g.gain.setValueAtTime(.24,t+d);g.gain.exponentialRampToValueAtTime(.001,t+d+.32);
+    o.start(t+d);o.stop(t+d+.35);
+  });
+}
+
+function synthTile(){
+  const ctx=getCtx(),t=ctx.currentTime;
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);
+  o.type='sine';o.frequency.value=1100;
+  g.gain.setValueAtTime(.1,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);
+  o.start(t);o.stop(t+.12);
+}
+
+function synthDD(){
+  const ctx=getCtx(),t=ctx.currentTime;
+  // 6-note ascending brass-like fanfare
+  [[261.63,0,.4,'triangle'],[329.63,.2,.4,'triangle'],[392,.4,.4,'triangle'],
+   [523.25,.6,.5,'sine'],[659.25,.82,.5,'sine'],[783.99,1.0,.7,'sine']].forEach(([f,d,dur,tp])=>{
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type=tp;o.frequency.value=f;
+    g.gain.setValueAtTime(0,t+d);g.gain.linearRampToValueAtTime(.28,t+d+.05);
+    g.gain.exponentialRampToValueAtTime(.001,t+d+dur);
+    o.start(t+d);o.stop(t+d+dur+.05);
+  });
+}
+
+function synthReveal(){
+  const ctx=getCtx(),t=ctx.currentTime;
+  [[392,0,'sine'],[523.25,.2,'sine'],[659.25,.4,'sine'],[880,.62,'triangle']].forEach(([f,d,tp])=>{
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type=tp;o.frequency.value=f;
+    g.gain.setValueAtTime(0,t+d);g.gain.linearRampToValueAtTime(.22,t+d+.04);
+    g.gain.exponentialRampToValueAtTime(.001,t+d+.48);
+    o.start(t+d);o.stop(t+d+.52);
+  });
+}
+
+function synthFJFanfare(){
+  const ctx=getCtx(),t=ctx.currentTime;
+  // Dramatic 4-chord FJ opening fanfare
+  [[293.66,0,.5,'sine'],[369.99,.5,.5,'sine'],[440,0,.5,'sine'],
+   [554.37,1.05,.8,'sine'],[659.25,1.05,.8,'sine']].forEach(([f,d,dur,tp])=>{
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type=tp;o.frequency.value=f;
+    g.gain.setValueAtTime(0,t+d);g.gain.linearRampToValueAtTime(.22,t+d+.06);
+    g.gain.exponentialRampToValueAtTime(.001,t+d+dur);
+    o.start(t+d);o.stop(t+d+dur+.05);
+  });
+}
+
+/* ── FJ THINK MUSIC ── */
+let fjMusicNodes=[];
+let fjMusicTimer=null;
+let fjMusicCtx=null;
+
+function startFJMusic(){
+  if(soundURLs['fjthink']&&soundURLs['fjthink'].trim()){
+    // Play custom URL for think music
+    customAudioEl=new Audio(soundURLs['fjthink']);
+    customAudioEl.volume=0.75;
+    customAudioEl.play().catch(()=>_synthFJMusic());
+    fjCustomPlaying=true;
+    return;
+  }
+  _synthFJMusic();
+}
+
+function _synthFJMusic(){
+  const ctx=getCtx();fjMusicNodes=[];
+  const t=ctx.currentTime+.1;
+  const beat=60/80; // 80 BPM
+
+  // Original melody — minor key, tense game-show feel
+  const melody=[
+    [261.63,0,.85],[311.13,1,.85],[349.23,2,.85],[392,3,1.1],
+    [349.23,4,.6],[329.63,5,.6],[311.13,6,.85],[293.66,7,1.1],
+    [261.63,8,.85],[246.94,9,.85],[261.63,10,.85],[293.66,11,.85],
+    [311.13,12,1.1],[349.23,13,.85],[392,14,.85],[415.3,15,1.1],
+    [392,16,.85],[349.23,17,.85],[329.63,18,.85],[311.13,19,.85],
+    [293.66,20,.85],[277.18,21,.85],[261.63,22,1.1],[246.94,23,.85],
+    [233.08,24,.85],[220,25,.85],[233.08,26,.85],[246.94,27,.85],
+    [261.63,28,2.0],
+  ];
+  const bass=[
+    [130.81,0],[130.81,2],[174.61,4],[174.61,6],
+    [130.81,8],[130.81,10],[146.83,12],[146.83,14],
+    [130.81,16],[123.47,18],[130.81,20],[116.54,22],
+    [110,24],[130.81,26],[130.81,28],
+  ];
+
+  melody.forEach(([freq,step,dur])=>{
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='triangle';o.frequency.value=freq;
+    const st=t+step*beat;
+    g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(.14,st+.04);
+    g.gain.exponentialRampToValueAtTime(.001,st+dur*beat);
+    o.start(st);o.stop(st+dur*beat+.05);
+    fjMusicNodes.push(o);
+  });
+  bass.forEach(([freq,step])=>{
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.type='sine';o.frequency.value=freq;
+    const st=t+step*beat;
+    g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(.1,st+.05);
+    g.gain.exponentialRampToValueAtTime(.001,st+beat*1.7);
+    o.start(st);o.stop(st+beat*1.8);
+    fjMusicNodes.push(o);
+  });
+}
+
+function stopFJMusicNodes(){
+  fjMusicNodes.forEach(o=>{try{o.stop();}catch(e){}});
+  fjMusicNodes=[];
+  stopCustomAudio();
+}
+
+/* ── SOUND SETTINGS PANEL ── */
+function openSoundPanel(){
+  renderSoundRows();
+  document.getElementById('soundPanel').classList.add('active');
+}
+function renderSoundRows(){
+  const wrap=document.getElementById('soundRows');if(!wrap)return;
+  wrap.innerHTML='';
+  SOUND_DEFS.forEach(({key,label})=>{
+    const loaded=!!(soundURLs[key]);
+    const vol=soundVols[key]!==undefined?soundVols[key]:0.85;
+    const pct=Math.round(vol*100);
+    const row=document.createElement('div');row.className='sound-row';
+    row.style.flexDirection='column';row.style.alignItems='stretch';
+    row.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="sound-lbl">${label}</div>
+        <div class="sound-status ${loaded?'loaded':'empty'}" id="sstatus-${key}">
+          ${loaded?'✓ Custom loaded':'Using synthesized'}
+        </div>
+        <input type="file" accept="audio/*" class="sound-file-input" id="sfile-${key}"
+          onchange="uploadSoundFile('${key}',this)" />
+        <button class="sound-upload-btn" onclick="document.getElementById('sfile-${key}').click()">
+          ${loaded?'Replace':'Upload MP3'}
+        </button>
+        <button class="sound-test-btn" onclick="testSoundKey('${key}')">▶</button>
+        ${loaded?`<button class="sound-clear-btn" onclick="clearOneSound('${key}')">✕</button>`:''}
+      </div>
+      ${loaded?`
+      <div class="vol-row">
+        <span class="vol-lbl">Volume</span>
+        <input type="range" min="0" max="100" value="${pct}" class="vol-slider"
+          oninput="setSoundVol('${key}',this.value/100);document.getElementById('vpct-${key}').textContent=this.value+'%'" />
+        <span class="vol-pct" id="vpct-${key}">${pct}%</span>
+      </div>`:''}`;
+    wrap.appendChild(row);
+  });
+}
+function testSoundKey(key){
+  if(key==='fjthink'){startFJMusic();setTimeout(stopFJMusicNodes,5000);}
+  else playSound(key);
+}
+
+/* ── SHIM: update all old playX() calls ── */
+function playCorrect(){playSound('correct');}
+function playWrong(){playSound('wrong');}
+function playTileClick(){playSound('tile');}
+function playDD(){playSound('dd');}
+function playReveal(){playSound('reveal');}
+function playFJFanfare(){playSound('fjfanfare');}
+
+/* ═══════════════════════════════════════════
+   BOARD
+═══════════════════════════════════════════ */
+function renderBoard(){
+  const grid=document.getElementById('boardGrid');
+  grid.innerHTML='';
+  CATS.forEach(cat=>{
+    const h=document.createElement('div');h.className='cat-hd';h.textContent=cat;grid.appendChild(h);
+  });
+  VALS.forEach((val,vi)=>{
+    CATS.forEach((cat,ci)=>{
+      const key=cellKey(cat,val),used=!!S.used[key];
+      const cell=document.createElement('div');
+      cell.className='cell'+(used?' used':'');
+      cell.textContent=used?'USED':('$'+val);
+      if(!used)cell.onclick=()=>openClue(cat,val,ci,vi);
+      grid.appendChild(cell);
+    });
+  });
+}
+function renderStrip(){
+  const s=document.getElementById('scoreStrip');s.innerHTML='';
+  S.players.forEach(p=>{
+    const chip=document.createElement('div');chip.className='score-chip';
+    chip.style.borderColor=p.color;
+    chip.innerHTML=`<span>${esc(p.name)}</span><b>${fmtScore(p.score)}</b>`;
+    s.appendChild(chip);
+  });
+}
+function fmtScore(n){return(n<0?'-$'+Math.abs(n):'$'+n);}
+
+/* ═══════════════════════════════════════════
+   REGULAR CLUE
+═══════════════════════════════════════════ */
+function openClue(cat,val,ci,vi){
+  playTileClick();
+  if(isDD(ci,vi)){openDD(cat,val,ci,vi);return;}
+  curCell={cat,val,ci,vi};
+  const qa=QA[cat][val];
+  document.getElementById('clueEyebrow').textContent=cat+' — $'+val;
+  document.getElementById('clueText').textContent=qa.c;
+  document.getElementById('answerBlock').style.display='none';
+  document.getElementById('answerText').textContent=qa.a;
+  document.getElementById('revealActions').style.display='flex';
+  document.getElementById('awardSection').style.display='none';
+  document.getElementById('clueModal').className='modal';
+  document.getElementById('clueOverlay').classList.add('active');
+}
+function revealAnswer(){
+  playReveal();
+  document.getElementById('answerBlock').style.display='block';
+  document.getElementById('revealActions').style.display='none';
+  buildAwardGrids('awardGrid','wrongGrid',curCell.val,false);
+  document.getElementById('awardSection').style.display='block';
+}
+function buildAwardGrids(awardId,wrongId,val,isDD){
+  const ag=document.getElementById(awardId);ag.innerHTML='';
+  const wg=document.getElementById(wrongId);if(wg)wg.innerHTML='';
+  S.players.forEach((p,idx)=>{
+    const ab=document.createElement('button');ab.className='award-btn';
+    ab.style.background=p.color;ab.textContent=p.name+' +'+fmtScore(val);
+    ab.onclick=()=>award(idx,val,isDD);ag.appendChild(ab);
+    if(wg){
+      const wb=document.createElement('button');wb.className='wrong-btn';
+      wb.style.color=p.color;wb.style.borderColor=p.color;
+      wb.textContent=p.name+' −'+fmtScore(val).replace('$','$');
+      wb.onclick=()=>markWrong(idx,val);wg.appendChild(wb);
+    }
+  });
+}
+function award(idx,val,skipClose){
+  playCorrect();
+  S.players[idx].score+=val;
+  if(curCell&&!skipClose)S.used[cellKey(curCell.cat,curCell.val)]=true;
+  S.log.unshift({text:`${S.players[idx].name} +${fmtScore(val)} — ${curCell?curCell.cat+' ($'+curCell.val+')':'Daily Double'}`,ts:Date.now()});
+  save();
+  if(!skipClose)closeClue(true,true);
+  else{renderStrip();renderBoard();}
+}
+function markWrong(idx,val){
+  playWrong();
+  S.players[idx].score-=val;
+  S.log.unshift({text:`${S.players[idx].name} −${fmtScore(val)} — wrong answer`,ts:Date.now()});
+  save();renderStrip();
+  showToast(S.players[idx].name+' −'+fmtScore(val));
+}
+function closeClue(markUsed,skip){
+  if(markUsed&&!skip&&curCell){S.used[cellKey(curCell.cat,curCell.val)]=true;save();}
+  document.getElementById('clueOverlay').classList.remove('active');
+  curCell=null;renderBoard();renderStrip();
+}
+
+/* ═══════════════════════════════════════════
+   DAILY DOUBLE
+═══════════════════════════════════════════ */
+function openDD(cat,val,ci,vi){
+  curCell={cat,val,ci,vi};
+  const qa=QA[cat][val];
+  // Wager phase
+  document.getElementById('ddWagerPhase').style.display='block';
+  document.getElementById('ddCluePhase').style.display='none';
+  document.getElementById('ddAnswerBlock').style.display='none';
+  document.getElementById('ddRevealActions').style.display='flex';
+  document.getElementById('ddAwardSection').style.display='none';
+  document.getElementById('ddWagerSubtext').textContent=
+    `Category: ${cat} | Quick picks below, or enter a custom amount.`;
+  // Quick wager buttons
+  const qw=document.getElementById('ddQuickWagers');qw.innerHTML='';
+  const maxScore=Math.max(...S.players.map(p=>p.score),val);
+  [val,Math.round(maxScore*.5),maxScore,2000].filter((v,i,a)=>a.indexOf(v)===i&&v>0).forEach(amt=>{
+    const b=document.createElement('button');b.className='wager-btn';
+    b.textContent='$'+amt;b.onclick=()=>{document.getElementById('ddWagerInput').value=amt;};
+    qw.appendChild(b);
+  });
+  document.getElementById('ddWagerInput').value='';
+  playDD();
+  document.getElementById('ddOverlay').classList.add('active');
+}
+function confirmDDWager(){
+  const raw=parseInt(document.getElementById('ddWagerInput').value)||0;
+  ddWager=Math.max(0,raw);
+  document.getElementById('ddWagerPhase').style.display='none';
+  document.getElementById('ddCluePhase').style.display='block';
+  const qa=QA[curCell.cat][curCell.val];
+  document.getElementById('ddClueEyebrow').textContent=curCell.cat+' — DAILY DOUBLE — Wager: $'+ddWager;
+  document.getElementById('ddClueText').textContent=qa.c;
+  document.getElementById('ddAnswerText').textContent=qa.a;
+}
+function revealDDAnswer(){
+  playReveal();
+  document.getElementById('ddAnswerBlock').style.display='block';
+  document.getElementById('ddRevealActions').style.display='none';
+  const sec=document.getElementById('ddAwardSection');sec.style.display='block';
+  document.getElementById('ddAwardLabel').textContent='Who got the Daily Double?';
+  const wrap=document.getElementById('ddAwardBtns');wrap.innerHTML='';
+  S.players.forEach((p,idx)=>{
+    const cb=document.createElement('button');cb.className='award-btn';cb.style.background=p.color;
+    cb.textContent=p.name+' +$'+ddWager;
+    cb.onclick=()=>ddResult(idx,true);wrap.appendChild(cb);
+    const wb=document.createElement('button');wb.className='wrong-btn';
+    wb.style.color=p.color;wb.style.borderColor=p.color;
+    wb.textContent=p.name+' −$'+ddWager;
+    wb.onclick=()=>ddResult(idx,false);wrap.appendChild(wb);
+  });
+  const nb=document.createElement('button');nb.className='none-btn';nb.style.marginTop='8px';
+  nb.textContent='No one answered — back to board';nb.onclick=()=>closeDDModal(true);
+  wrap.appendChild(nb);
+}
+function ddResult(idx,correct){
+  if(correct){playCorrect();S.players[idx].score+=ddWager;}else{playWrong();S.players[idx].score-=ddWager;}
+  S.used[cellKey(curCell.cat,curCell.val)]=true;
+  S.log.unshift({text:`${S.players[idx].name} ${correct?'+':'-'}$${ddWager} — Daily Double (${curCell.cat})`,ts:Date.now()});
+  save();closeDDModal(true);
+}
+function closeDDModal(done){
+  document.getElementById('ddOverlay').classList.remove('active');
+  if(done){curCell=null;renderBoard();renderStrip();}
+}
+
+/* ═══════════════════════════════════════════
+   FINAL JEOPARDY
+═══════════════════════════════════════════ */
+let fjSeqIdx = 0;
+
+function startFinalJeopardy(){
+  fjWagers={};fjSeqIdx=0;
+  document.getElementById('fjCategoryLabel').textContent=FJ.category;
+  document.getElementById('fjWagerPhase').style.display='block';
+  document.getElementById('fjThinkPhase').style.display='none';
+  document.getElementById('fjAnswerBlock').style.display='none';
+  document.getElementById('fjSeqWager').style.display='block';
+  document.getElementById('fjAllLocked').style.display='none';
+  playSound('fjfanfare');
+  document.getElementById('fjOverlay').classList.add('active');
+  showFJSeqPlayer();
+}
+
+function showFJSeqPlayer(){
+  const p=S.players[fjSeqIdx];
+  const max=Math.max(p.score,0);
+  document.getElementById('fjSeqCard').innerHTML=`
+    <div class="fj-seq-name" style="color:${p.color}">${esc(p.name)}</div>
+    <div class="fj-seq-score">Current score: ${fmtScore(p.score)} &nbsp;·&nbsp; Max wager: $${max}</div>
+    <div class="fj-seq-input-row">
+      <input class="wager-input" id="fjSeqInput" type="number" min="0" max="${max}"
+        placeholder="Your wager $" style="border-color:${p.color};color:${p.color}" />
+      <button class="btn btn-gold" style="border-color:var(--dd-gold)" onclick="fjLockCurrentWager()">LOCK IN →</button>
+    </div>`;
+  setTimeout(()=>{const el=document.getElementById('fjSeqInput');if(el)el.focus();},120);
+  renderFJPills('fjLockedStrip');
+}
+
+function renderFJPills(elId){
+  const strip=document.getElementById(elId);if(!strip)return;strip.innerHTML='';
+  S.players.forEach((p,idx)=>{
+    const pill=document.createElement('div');pill.className='fj-locked-pill';
+    const locked=fjWagers.hasOwnProperty(idx);
+    pill.style.cssText=`background:${locked?p.color:'transparent'};color:${locked?'#fff':p.color};border-color:${p.color};`;
+    pill.textContent=(locked?'✓ ':'')+p.name;
+    strip.appendChild(pill);
+  });
+}
+
+function fjLockCurrentWager(){
+  const raw=parseInt(document.getElementById('fjSeqInput').value)||0;
+  fjWagers[fjSeqIdx]=Math.max(0,raw);
+  fjSeqIdx++;
+  if(fjSeqIdx<S.players.length){
+    showFJSeqPlayer();
+  } else {
+    document.getElementById('fjSeqWager').style.display='none';
+    document.getElementById('fjAllLocked').style.display='block';
+    renderFJPills('fjLockedStripFinal');
+  }
+}
+
+function startFJThinkPhase(){
+  document.getElementById('fjWagerPhase').style.display='none';
+  document.getElementById('fjThinkPhase').style.display='block';
+  document.getElementById('fjClueText').textContent=FJ.c;
+  document.getElementById('fjAnswerText').textContent=FJ.a;
+  startFJMusic();
+  document.getElementById('musicIndicator').classList.add('playing');
+  document.getElementById('musicIndicator2').classList.add('playing');
+  let remaining=30;
+  document.getElementById('musicTimerLabel').textContent='Think music playing… 30s';
+  fjMusicTimer=setInterval(()=>{
+    remaining--;
+    document.getElementById('musicTimerLabel').textContent=
+      remaining>0?`Think music playing… ${remaining}s`:'Time is up!';
+    if(remaining<=0)stopFJMusic();
+  },1000);
+}
+
+function stopFJMusic(){
+  clearInterval(fjMusicTimer);
+  stopFJMusicNodes();
+  document.getElementById('musicIndicator').classList.remove('playing');
+  document.getElementById('musicIndicator2').classList.remove('playing');
+  document.getElementById('musicTimerLabel').textContent="Time's up!";
+  playSound('reveal');
+  document.getElementById('fjAnswerBlock').style.display='block';
+  const rg=document.getElementById('fjRevealGrid');rg.innerHTML='';
+  S.players.forEach((p,idx)=>{
+    const wager=fjWagers[idx]||0;
+    const row=document.createElement('div');row.className='fj-result-row';
+    row.style.borderColor=p.color;row.id='fjrow-'+idx;
+    row.innerHTML=`<div class="fj-result-name" style="color:${p.color}">${esc(p.name)}</div>
+      <div class="fj-result-wager">Wager: $${wager} | Score going in: ${fmtScore(p.score)}</div>
+      <div class="fj-result-btns">
+        <button class="fj-correct-btn" onclick="fjScore(${idx},true)">✓ CORRECT +$${wager}</button>
+        <button class="fj-wrong-btn" onclick="fjScore(${idx},false)">✗ WRONG −$${wager}</button>
+      </div>
+      <div class="fj-result-tag" id="fjtag-${idx}"></div>`;
+    rg.appendChild(row);
+  });
+}
+
+function fjScore(idx,correct){
+  const wager=fjWagers[idx]||0;
+  if(correct){playSound('correct');S.players[idx].score+=wager;}
+  else{playSound('wrong');S.players[idx].score-=wager;}
+  S.log.unshift({text:`${S.players[idx].name} ${correct?'+':'-'}$${wager} — Final Jeopardy`,ts:Date.now()});
+  save();renderStrip();
+  const tag=document.getElementById('fjtag-'+idx);
+  tag.textContent=correct?`✓ +$${wager} → ${fmtScore(S.players[idx].score)}`:`✗ −$${wager} → ${fmtScore(S.players[idx].score)}`;
+  tag.style.color=correct?'#6fcf97':'#e05c5c';
+  document.querySelector(`#fjrow-${idx} .fj-correct-btn`).disabled=true;
+  document.querySelector(`#fjrow-${idx} .fj-wrong-btn`).disabled=true;
+}
+
+function closeFJ(){
+  clearInterval(fjMusicTimer);stopFJMusicNodes();stopCustomAudio();
+  document.getElementById('fjOverlay').classList.remove('active');
+  renderBoard();renderStrip();
+}
+
+/* ═══════════════════════════════════════════
+   SCOREBOARD / LOG PANELS
+═══════════════════════════════════════════ */
+function openPanel(which){
+  if(which==='score'){renderPcards();document.getElementById('scorePanel').classList.add('active');}
+  else{renderLog();document.getElementById('logPanel').classList.add('active');}
+}
+function closePanel(id){document.getElementById(id).classList.remove('active');renderStrip();}
+function switchPanel(to){
+  document.getElementById('scorePanel').classList.remove('active');
+  document.getElementById('logPanel').classList.remove('active');
+  openPanel(to);
+}
+function renderPcards(){
+  const w=document.getElementById('playerCards');w.innerHTML='';
+  S.players.forEach((p,idx)=>{
+    const card=document.createElement('div');card.className='pcard';
+    card.innerHTML=`<div class="pcard-head" style="background:${p.color}">${esc(p.name)}</div>
+      <div class="pcard-body">
+        <div class="pcard-score">${fmtScore(p.score)}</div>
+        <div class="pcard-adj">
+          <button class="adj-btn adj-minus" onclick="adj(${idx},-100)">-100</button>
+          <button class="adj-btn adj-plus" onclick="adj(${idx},100)">+100</button>
+          <button class="adj-btn adj-plus" onclick="adj(${idx},200)">+200</button>
+          <button class="adj-btn adj-plus" onclick="adj(${idx},300)">+300</button>
+          <button class="adj-btn adj-plus" onclick="adj(${idx},500)">+500</button>
+        </div>
+        <input class="pname-input" value="${esc(p.name)}" onchange="rename(${idx},this.value)">
+      </div>`;
+    w.appendChild(card);
+  });
+}
+function adj(idx,amt){
+  S.players[idx].score+=amt;
+  S.log.unshift({text:`${S.players[idx].name} ${amt>0?'+':'-'}$${Math.abs(amt)} — manual adjustment`,ts:Date.now()});
+  save();renderPcards();renderStrip();
+}
+function rename(idx,v){v=v.trim();if(v){S.players[idx].name=v;save();renderStrip();}}
+function renderLog(){
+  const l=document.getElementById('logList');l.innerHTML='';
+  if(!S.log.length){l.innerHTML='<div class="log-empty">No points yet — this fills as you play.</div>';return;}
+  S.log.forEach(e=>{
+    const li=document.createElement('li');
+    const t=new Date(e.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    li.innerHTML=`<span>${esc(e.text)}</span><span style="color:var(--ice);font-size:.75rem">${t}</span>`;
+    l.appendChild(li);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   MISC
+═══════════════════════════════════════════ */
+function confirmReset(){
+  if(confirm('Reset all scores, the log, re-enable every tile, and pick new Daily Doubles? This can\'t be undone.')){
+    S=fresh();save();renderBoard();renderStrip();showToast('Game reset!');
+  }
+}
+let toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2400);
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+/* ═══════════════════════════════════════════
+   PLAYER MANAGEMENT
+═══════════════════════════════════════════ */
+const PRESET_COLORS=['#8C2F2F','#3B6B4A','#5B3A8E','#1C6E8C','#B5730A','#1A6B5C','#7A1C4A','#4A6B1A','#5C1A6B','#1A3A8C'];
+let pmEditingColor=null; // idx being color-edited
+
+function openPlayersPanel(){
+  pmEditingColor=null;
+  renderPmList();
+  document.getElementById('playersPanel').classList.add('active');
+}
+
+function renderPmList(){
+  const list=document.getElementById('pmList');
+  list.innerHTML='';
+  S.players.forEach((p,idx)=>{
+    const row=document.createElement('div');
+    row.innerHTML=`
+      <div class="pm-row">
+        <div class="pm-swatch" style="background:${p.color}" title="Change color" onclick="toggleColorPicker(${idx})"></div>
+        <input class="pm-name" value="${esc(p.name)}" placeholder="Player name"
+          onchange="pmRename(${idx},this.value)" />
+        <button class="pm-remove" ${S.players.length<=2?'disabled title="Need at least 2 players"':''}
+          onclick="pmRemove(${idx})">✕</button>
+      </div>
+      <div id="cpick-${idx}" style="display:${pmEditingColor===idx?'block':'none'};padding:0 0 10px 38px;">
+        <div class="color-picker-row">
+          ${PRESET_COLORS.map(c=>`<div class="color-dot${p.color===c?' selected':''}"
+            style="background:${c}" onclick="pmSetColor(${idx},'${c}')"></div>`).join('')}
+        </div>
+      </div>`;
+    list.appendChild(row);
+  });
+  const canAdd=S.players.length<8;
+  document.getElementById('pmAddBtn').disabled=!canAdd;
+  document.getElementById('pmAddNote').textContent=canAdd?'':'Maximum 8 players reached.';
+}
+
+function toggleColorPicker(idx){
+  pmEditingColor=(pmEditingColor===idx)?null:idx;
+  renderPmList();
+}
+
+function pmSetColor(idx,color){
+  S.players[idx].color=color;
+  pmEditingColor=null;
+  save();renderPmList();renderStrip();renderPcards();
+}
+
+function pmRename(idx,val){
+  val=val.trim();
+  if(val){S.players[idx].name=val;save();renderStrip();renderPcards();}
+}
+
+function pmRemove(idx){
+  if(S.players.length<=2){showToast('Need at least 2 players.');return;}
+  const name=S.players[idx].name;
+  if(!confirm(`Remove ${name}? Their score will be lost.`))return;
+  S.players.splice(idx,1);
+  save();renderPmList();renderStrip();renderPcards();
+  showToast(`${name} removed.`);
+}
+
+function addPlayer(){
+  if(S.players.length>=8){showToast('Maximum 8 players.');return;}
+  // Pick an unused color
+  const usedColors=S.players.map(p=>p.color);
+  const color=PRESET_COLORS.find(c=>!usedColors.includes(c))||PRESET_COLORS[S.players.length%PRESET_COLORS.length];
+  S.players.push({name:`Player ${S.players.length+1}`,color,score:0});
+  save();renderPmList();renderStrip();renderPcards();
+  showToast('Player added! Tap their name to rename.');
+}
+
+/* ═══════════════════════════════════════════
+   SUPABASE — HOST BUZZ FUNCTIONS
+═══════════════════════════════════════════ */
+let buzzResults = []; // ordered list of buzz events
+
+async function toggleBuzz(){
+  if(!SB_OK) return;
+  if(!buzzIsOpen) await openBuzz(); else await closeBuzz();
+}
+async function openBuzz(){
+  buzzIsOpen=true;buzzResults=[];
+  // Clear old buzzes from DB
+  await sb.from('jeopardy_buzzes').delete().gte('id',0);
+  // Broadcast to players
+  await sbChannel.send({type:'broadcast',event:'buzz_open',
+    payload:{clue: curCell ? QA[curCell.cat][curCell.val].c : ''}});
+  const btn=document.getElementById('buzzOpenBtn');
+  btn.textContent='🔴 Close Buzz Window';btn.classList.add('active');
+  renderBuzzList();
+}
+async function closeBuzz(){
+  buzzIsOpen=false;
+  await sbChannel.send({type:'broadcast',event:'buzz_closed',payload:{}});
+  const btn=document.getElementById('buzzOpenBtn');
+  btn.textContent='🔔 Open Buzz Window';btn.classList.remove('active');
+}
+function hostHandleBuzz(row){
+  if(!buzzIsOpen) return;
+  buzzResults.push(row);
+  buzzResults.sort((a,b)=>new Date(a.buzzed_at)-new Date(b.buzzed_at));
+  renderBuzzList();
+}
+function renderBuzzList(){
+  const el=document.getElementById('buzzList');if(!el)return;
+  if(!buzzResults.length){
+    el.innerHTML='<div class="buzz-empty">Buzz window is open — waiting for players...</div>';return;
+  }
+  el.innerHTML='';
+  buzzResults.forEach((r,i)=>{
+    const item=document.createElement('div');item.className='buzz-item';
+    const ts=new Date(r.buzzed_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    item.innerHTML=`<span class="buzz-rank">${i===0?'🥇':`#${i+1}`}</span>
+      <span class="buzz-name" style="color:${r.player_color}">${esc(r.player_name)}</span>
+      <span class="buzz-time">${ts}</span>`;
+    el.appendChild(item);
+  });
+}
+function broadcastScores(){
+  if(!SB_OK||!sbChannel) return;
+  sbChannel.send({type:'broadcast',event:'scores',payload:{players:S.players}});
+}
+
+/* ═══════════════════════════════════════════
+   SUPABASE — HOST FJ WAGER FUNCTIONS
+═══════════════════════════════════════════ */
+let fjWagerSubmitted={}; // {name: amount}
+
+function hostHandleWager(row){
+  fjWagerSubmitted[row.player_name]=row.amount;
+  updateFJWagerCount();
+}
+function updateFJWagerCount(){
+  const count=Object.keys(fjWagerSubmitted).length;
+  const total=S.players.length;
+  const countEl=document.getElementById('fjWagerCount');
+  const btn=document.getElementById('fjRevealBtn');
+  if(countEl) countEl.textContent=count;
+  // Update pills
+  const pills=document.getElementById('fjWagerPills');
+  if(pills){
+    pills.innerHTML='';
+    S.players.forEach(p=>{
+      const done=fjWagerSubmitted.hasOwnProperty(p.name);
+      const pill=document.createElement('div');pill.className='fj-locked-pill';
+      pill.style.cssText=`background:${done?p.color:'transparent'};color:${done?'#fff':p.color};border-color:${p.color};`;
+      pill.textContent=(done?'✓ ':'')+p.name;
+      pills.appendChild(pill);
+    });
+  }
+  if(btn&&count>=total){
+    btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';
+  }
+}
+async function fetchFJWagers(){
+  if(!SB_OK) return;
+  const {data}=await sb.from('jeopardy_wagers').select('*');
+  if(data) data.forEach(r=>{fjWagers[S.players.findIndex(p=>p.name===r.player_name)]=r.amount;});
+}
+
+/* ═══════════════════════════════════════════
+   SUPABASE — MODIFIED FJ LAUNCH
+═══════════════════════════════════════════ */
+const _origStartFJ = startFinalJeopardy;
+// Override startFinalJeopardy to use Supabase when available
+startFinalJeopardy = async function(){
+  if(!SB_OK){ _origStartFJ(); return; }
+  fjWagers={};fjWagerSubmitted={};fjSeqIdx=0;
+  document.getElementById('fjCategoryLabel').textContent=FJ.category;
+  // Clear old wagers
+  await sb.from('jeopardy_wagers').delete().gte('id',0).or('id.is.null');
+  // For text PK table, delete all rows differently:
+  await sb.from('jeopardy_wagers').delete().neq('player_name','__never__');
+  // Set up waiting UI
+  document.getElementById('fjWagerPhase').style.display='block';
+  document.getElementById('fjThinkPhase').style.display='none';
+  document.getElementById('fjAnswerBlock').style.display='none';
+  document.getElementById('fjWagerWaiting').style.display='block';
+  document.getElementById('fjSeqWager').style.display='none';
+  document.getElementById('fjAllLocked').style.display='none';
+  document.getElementById('fjWagerTotal').textContent=S.players.length;
+  document.getElementById('fjWagerCount').textContent='0';
+  document.getElementById('fjWagerPills').innerHTML='';
+  // Broadcast to player devices
+  await sbChannel.send({type:'broadcast',event:'fj_start',
+    payload:{players:S.players}});
+  playSound('fjfanfare');
+  document.getElementById('fjOverlay').classList.add('active');
+  updateFJWagerCount();
+};
+
+const _origStartFJThink = startFJThinkPhase;
+startFJThinkPhase = async function(){
+  if(SB_OK) await fetchFJWagers();
+  _origStartFJThink();
+  // Broadcast clue so player devices can see it
+  if(SB_OK&&sbChannel) await sbChannel.send({type:'broadcast',event:'fj_clue',payload:{clue:FJ.c}});
+};
+
+/* ═══════════════════════════════════════════
+   SUPABASE — PLAYER VIEW FUNCTIONS
+═══════════════════════════════════════════ */
+let pvState='lobby';
+let pvHasBuzzed=false;
+
+function pvInit(){
+  document.getElementById('screen-title').style.display='none';
+  document.getElementById('screen-board').style.display='none';
+  document.getElementById('player-view').style.display='flex';
+  document.getElementById('player-view').style.flexDirection='column';
+
+  if(PV_NAME){
+    // Already have a saved identity — go straight to game UI
+    pvShowGameUI();
+  } else {
+    // Show join screen with color picker
+    document.getElementById('pv-join-screen').style.display='flex';
+    document.getElementById('pv-game-ui').style.display='none';
+    // Build color picker
+    const picker=document.getElementById('pvColorPicker');picker.innerHTML='';
+    let selectedColor=PRESET_COLORS[0];
+    PRESET_COLORS.forEach(c=>{
+      const dot=document.createElement('div');dot.className='color-dot';
+      dot.style.background=c;
+      dot.onclick=()=>{
+        selectedColor=c;PV_COLOR=c;
+        picker.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('selected'));
+        dot.classList.add('selected');
+      };
+      picker.appendChild(dot);
+    });
+    picker.firstChild.classList.add('selected');
+    setTimeout(()=>document.getElementById('pvJoinName').focus(),200);
+  }
+}
+
+function pvShowGameUI(){
+  document.getElementById('pv-join-screen').style.display='none';
+  document.getElementById('pv-game-ui').style.display='flex';
+  document.getElementById('pvName').textContent=PV_NAME;
+  document.getElementById('pvName').style.color=PV_COLOR;
+  if(!SB_OK){
+    document.getElementById('pvNote').textContent='⚠ Supabase not configured — real-time features unavailable';
+    document.getElementById('pvNote').style.color='rgba(255,100,100,.6)';
+  }
+  pvSetState('lobby');
+}
+
+function pvJoin(){
+  const name=(document.getElementById('pvJoinName').value||'').trim();
+  const errEl=document.getElementById('pvJoinError');
+  if(!name){errEl.textContent='Please enter your name.';return;}
+  errEl.textContent='';
+  PV_NAME=name;
+  // PV_COLOR already set by picker (defaults to first preset)
+  localStorage.setItem('jep_pv_name',PV_NAME);
+  localStorage.setItem('jep_pv_color',PV_COLOR);
+  pvShowGameUI();
+  if(SB_OK&&sbChannel){
+    // Re-subscribe now that we have an identity
+    sbChannel.subscribe();
+  }
+}
+
+function pvClearIdentity(){
+  PV_NAME='';PV_COLOR='#C9A227';
+  localStorage.removeItem('jep_pv_name');
+  localStorage.removeItem('jep_pv_color');
+  pvInit();
+}
+
+function pvSetState(state, payload={}){
+  pvState=state;
+  ['lobby','buzz','buzzed','fj-wager','fj-submitted','fj-think'].forEach(s=>{
+    const el=document.getElementById('pv-'+s);
+    if(el)el.style.display='none';
+  });
+  const el=document.getElementById('pv-'+state);
+  if(el)el.style.display='block';
+
+  if(state==='buzz'){
+    pvHasBuzzed=false;
+    const btn=document.getElementById('pvBuzzBtn');
+    btn.disabled=false;btn.classList.add('pulsing');
+    if(payload.clue) document.getElementById('pvClueText').textContent=payload.clue;
+    else document.getElementById('pvClueText').style.display='none';
+  }
+  if(state==='fj-wager'&&payload.players){
+    const me=payload.players.find(p=>p.name===PV_NAME);
+    const max=me?Math.max(me.score,0):0;
+    document.getElementById('pvFJSub').textContent=
+      `Your score: ${me?fmtScore(me.score):'$0'} — Max wager: $${max}`;
+    const inp=document.getElementById('pvWagerInput');
+    inp.max=max;inp.value='';inp.placeholder=`Wager $0 – $${max}`;
+    setTimeout(()=>inp.focus(),120);
+  }
+  if(state==='fj-think'&&payload.clue){
+    document.getElementById('pvFJClue').textContent=payload.clue;
+  }
+}
+
+function pvUpdateScore(payload){
+  if(!payload.players) return;
+  const me=payload.players.find(p=>p.name===PV_NAME);
+  if(me) document.getElementById('pvScore').textContent=fmtScore(me.score);
+}
+
+async function submitBuzz(){
+  if(pvHasBuzzed||!SB_OK) return;
+  pvHasBuzzed=true;
+  const btn=document.getElementById('pvBuzzBtn');
+  btn.disabled=true;btn.classList.remove('pulsing');btn.textContent='Buzzed!';
+  const {error}=await sb.from('jeopardy_buzzes').insert({
+    player_name:PV_NAME||'Unknown',player_color:PV_COLOR
+  });
+  if(!error){
+    pvSetState('buzzed');
+    const res=document.getElementById('pvBuzzResult');
+    res.textContent='Buzzed! Waiting for host...';
+    res.style.cssText=`color:${PV_COLOR};border-color:${PV_COLOR};`;
+  }
+}
+
+async function submitPlayerWager(){
+  if(!SB_OK) return;
+  const raw=parseInt(document.getElementById('pvWagerInput').value)||0;
+  const wager=Math.max(0,raw);
+  const {error}=await sb.from('jeopardy_wagers').upsert({
+    player_name:PV_NAME||'Unknown',amount:wager
+  });
+  if(!error) pvSetState('fj-submitted');
+  else showToast('Error submitting wager — try again.');
+}
+
+/* ═══════════════════════════════════════════
+   PLAYER LINKS PANEL
+═══════════════════════════════════════════ */
+function openPlayerLinksPanel(){
+  renderPlayerLinks();
+  document.getElementById('playerLinksPanel').classList.add('active');
+}
+function renderPlayerLinks(){
+  const base=(document.getElementById('plinkBase').value||'').replace(/\/$/,'');
+  const joinUrl=base ? `${base}?join` : '(enter your Vercel URL above first)';
+  const wrap=document.getElementById('plinkRows');wrap.innerHTML='';
+  // Single shared URL for all players
+  const row=document.createElement('div');row.className='plink-row';
+  row.style.cssText='flex-direction:column;align-items:stretch;gap:8px;';
+  row.innerHTML=`
+    <div style="font-size:.82rem;color:var(--ice);">Share this ONE link with all players in Discord. Each player clicks it and enters their own name:</div>
+    <div style="display:flex;gap:8px;">
+      <input class="plink-url" readonly value="${esc(joinUrl)}" id="plurl-shared" style="font-size:.85rem;" />
+      <button class="plink-copy" onclick="copyLink('plurl-shared')">Copy</button>
+    </div>
+    <div style="font-size:.76rem;color:rgba(255,255,255,.35);">Your host URL (bookmark this): ${esc(base||window.location.href.split('?')[0])}</div>`;
+  wrap.appendChild(row);
+}
+function copyLink(inputId){
+  const el=document.getElementById(inputId);if(!el)return;
+  navigator.clipboard.writeText(el.value).then(()=>showToast('Link copied!')).catch(()=>{
+    el.select();document.execCommand('copy');showToast('Link copied!');
+  });
+}
+
+/* ═══════════════════════════════════════════
+   ANSWERS VIEW
+═══════════════════════════════════════════ */
+function renderAnswersView(){
+  document.getElementById('screen-title').style.display='none';
+  document.getElementById('screen-board').style.display='none';
+  document.getElementById('player-view').style.display='none';
+  document.getElementById('answers-view').style.display='block';
+
+  const grid=document.getElementById('avGrid');
+  grid.innerHTML='';
+
+  CATS.forEach((cat,ci)=>{
+    const col=document.createElement('div');
+    col.className='av-col';
+    const hd=document.createElement('div');
+    hd.className='av-cat-hd';hd.textContent=cat;
+    col.appendChild(hd);
+
+    VALS.forEach((val,vi)=>{
+      const dd=isDD(ci,vi);
+      const used=!!S.used[cellKey(cat,val)];
+      const qa=QA[cat][val];
+      const tile=document.createElement('div');
+      tile.className='av-tile'+(dd?' av-dd':'')+(used?' av-used':'');
+
+      const valRow=document.createElement('div');valRow.className='av-val';
+      valRow.textContent='$'+val;
+      if(dd){const tag=document.createElement('span');tag.className='av-dd-tag';tag.textContent='DD';valRow.appendChild(tag);}
+      if(used){const tag=document.createElement('span');tag.className='av-used-tag';tag.textContent='USED';valRow.appendChild(tag);}
+
+      const clueEl=document.createElement('div');clueEl.className='av-clue';clueEl.textContent=qa.c;
+      const ansEl=document.createElement('div');ansEl.className='av-answer';ansEl.textContent=qa.a;
+
+      tile.appendChild(valRow);tile.appendChild(clueEl);tile.appendChild(ansEl);
+      col.appendChild(tile);
+    });
+    grid.appendChild(col);
+  });
+
+  // Final Jeopardy
+  document.getElementById('avFJ').innerHTML=`
+    <div class="av-fj-cat">⭐ FINAL JEOPARDY — ${esc(FJ.category)}</div>
+    <div class="av-fj-clue">${esc(FJ.c)}</div>
+    <div class="av-fj-answer">${esc(FJ.a)}</div>`;
+
+  // Auto-refresh every 8s so used tiles stay current without manual reload
+  setTimeout(renderAnswersView, 8000);
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+loadSoundSettings();
+sbSetup();
+if(VIEW==='player'){
+  pvInit();
+} else if(VIEW==='answers'){
+  renderAnswersView();
+} else {
+  // Host — save state immediately so ?answers tab can read DD positions
+  save();
+  applyBoardBg();renderBoard();renderStrip();
+  if(SB_OK){
+    document.getElementById('playerLinksBtn').style.display='';
+    // Show buzz section when clue OPENS (not when answer reveals)
+    const _origOpenClue=openClue;
+    openClue=function(cat,val,ci,vi){
+      _origOpenClue(cat,val,ci,vi);
+      buzzResults=[];renderBuzzList();
+      const bs=document.getElementById('buzzSection');
+      if(bs) bs.style.display='block';
+    };
+    // Broadcast scores on every award/deduct
+    const _origAward=award;
+    award=function(idx,val,skipClose){
+      _origAward(idx,val,skipClose);broadcastScores();
+    };
+    const _origMarkWrong=markWrong;
+    markWrong=function(idx,val){
+      _origMarkWrong(idx,val);broadcastScores();
+    };
+    // Close buzz section when clue closes
+    const _origCloseClue=closeClue;
+    closeClue=function(markUsed,skip){
+      closeBuzz().catch(()=>{});
+      const bs=document.getElementById('buzzSection');
+      if(bs){bs.style.display='none';}
+      _origCloseClue(markUsed,skip);
+    };
+  }
+}
+</script>
+</body>
+</html>
