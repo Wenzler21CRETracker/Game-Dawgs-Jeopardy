@@ -661,49 +661,49 @@ function sbSetup(){
 /* ═══════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════ */
-const CATS = ["VIDEO GAME VILLAINS","BEER & CRAFT BREWING","2000-2010 MOVIES","N64 VIDEO GAMES","N. AMERICAN TREES & PLANTS"];
+const CATS = ["BREAKING BAD","NFL QUARTERBACKS","POTENT POTABLES","EUROPEAN GEOGRAPHY","PGA TOUR"];
 const VALS = [100,200,300,400,500];
 const QA = {
-  "VIDEO GAME VILLAINS":{
-    100:{c:"This massive ape, Nintendo's very first villain, debuted in a 1981 arcade game of the same name and kidnapped a woman named Pauline.",a:"Who is Donkey Kong?"},
-    200:{c:"This silver-haired antagonist of Final Fantasy VII was once the greatest warrior in SOLDIER before discovering his true origins and vowing to destroy humanity.",a:"Who is Sephiroth?"},
-    300:{c:"This darkly comedic AI villain guides players through Aperture Science's test chambers in Portal while secretly plotting to kill them the entire time.",a:"Who is GLaDOS?"},
-    400:{c:"The self-proclaimed villain of Borderlands 2, this charismatic Hyperion CEO gleefully announces his own evil intentions while hunting the Vault Hunters across Pandora.",a:"Who is Handsome Jack?"},
-    500:{c:"This tyrannical founder of the floating city of Columbia in BioShock Infinite turns out to share a deeply personal and shocking connection with protagonist Booker DeWitt.",a:"Who is Zachary Comstock (Father Comstock)?"}
+  "BREAKING BAD":{
+    100:{c:"This is the name of Walter White's former student and reluctant meth-cooking partner, played by Aaron Paul across all five seasons.",a:"Who is Jesse Pinkman?"},
+    200:{c:"Walter White adopts this pseudonym — the surname of a Nobel Prize-winning German physicist — as his drug kingpin alter ego throughout the series.",a:"Who is Heisenberg?"},
+    300:{c:"Gustavo Fring uses this fast food chicken restaurant chain as the legitimate front for his regional drug distribution network across the American Southwest.",a:"What is Los Pollos Hermanos?"},
+    400:{c:"Walter White allows this woman — Jesse's girlfriend and a recovering addict — to choke to death in her sleep rather than intervening, a decision that haunts Jesse for the remainder of the series.",a:"Who is Jane Margolis?"},
+    500:{c:"Gustavo Fring's personal vendetta against the Juarez cartel traces back to the murder of this man — his business partner in Chile, whom he regarded as far more than a colleague.",a:"Who is Maximino Arciniega (Max)?"}
   },
-  "BEER & CRAFT BREWING":{
-    100:{c:"This broad beer style, fermented cold with bottom-fermenting yeast, is the world's most consumed and includes Budweiser, Coors, and Heineken among its most famous examples.",a:"What is a lager?"},
-    200:{c:"This bitter compound — derived from the cone-shaped flowers of the Humulus lupulus plant — gives beer its bitterness and aroma, and also acts as a natural preservative.",a:"What are hops?"},
-    300:{c:"This three-letter measurement quantifies a beer's bitterness on a scale where a light lager sits around 8 and a double IPA can exceed 100.",a:"What is IBU (International Bitterness Units)?"},
-    400:{c:"This brewing technique — pioneered largely by Sierra Nevada — involves adding hops after fermentation rather than during the boil, maximizing aroma without significantly adding bitterness.",a:"What is dry hopping?"},
-    500:{c:"To legally carry the Authentic Trappist Product seal, this Belgian ale style must be brewed within the walls of a monastery by or under the direct supervision of monks.",a:"What is Trappist ale?"}
+  "NFL QUARTERBACKS":{
+    100:{c:"This quarterback won a record seven Super Bowl championships — six with the New England Patriots and one with the Tampa Bay Buccaneers.",a:"Who is Tom Brady?"},
+    200:{c:"This New Orleans Saints quarterback set the NFL record for most consecutive games with a touchdown pass at 54, a mark he held until his retirement.",a:"Who is Drew Brees?"},
+    300:{c:"Peyton Manning set the NFL single-season record for touchdown passes in 2013. How many did he throw?",a:"What is 55?"},
+    400:{c:"This Pittsburgh Steelers quarterback won four Super Bowl championships in six seasons during the 1970s, earning Super Bowl MVP honors twice.",a:"Who is Terry Bradshaw?"},
+    500:{c:"This San Francisco 49ers quarterback is the only player in NFL history to win the Super Bowl MVP award three times, achieving the feat across four Super Bowl victories.",a:"Who is Joe Montana?"}
   },
-  "2000-2010 MOVIES":{
-    100:{c:"Ridley Scott directed this 2000 Best Picture winner in which Russell Crowe plays a Roman general enslaved and forced to fight as a gladiator to exact revenge on a corrupt emperor.",a:"What is Gladiator?"},
-    200:{c:"Christopher Nolan directed this 2008 film in which Heath Ledger delivered a posthumous Oscar-winning performance as a psychopathic criminal who demands Gotham descend into anarchy.",a:"What is The Dark Knight?"},
-    300:{c:"The Coen Brothers adapted this Cormac McCarthy novel into a 2007 Best Picture winner featuring Javier Bardem as the unstoppable hitman Anton Chigurh and Tommy Lee Jones as a weary Texas sheriff.",a:"What is No Country for Old Men?"},
-    400:{c:"Paul Thomas Anderson directed this 2007 epic in which Daniel Day-Lewis plays ruthless oil prospector Daniel Plainview — delivering one of cinema's most quoted monologues involving a milkshake.",a:"What is There Will Be Blood?"},
-    500:{c:"Alfonso Cuarón directed this 2006 dystopian thriller starring Clive Owen, set in a near-future Britain where humanity has lost the ability to reproduce and a single pregnant woman must be protected at all costs.",a:"What is Children of Men?"}
+  "POTENT POTABLES":{
+    100:{c:"This agave-based spirit, produced primarily in the Jalisco region of Mexico and named for the city near its origin, is the base liquor in a margarita.",a:"What is tequila?"},
+    200:{c:"This French grape-based brandy must be aged at least two years in French oak barrels and produced in a specific region of southwestern France to legally carry its name.",a:"What is Cognac?"},
+    300:{c:"This bourbon-based cocktail — served over crushed ice with fresh mint and simple syrup — has been the official drink of the Kentucky Derby at Churchill Downs since the 1930s.",a:"What is a Mint Julep?"},
+    400:{c:"This Italian digestif, distilled from the grape skins, seeds, and stems left over after winemaking, is classified as a pomace brandy and typically ranges from 35 to 60 percent alcohol.",a:"What is grappa?"},
+    500:{c:"This specific fermentation method — used in Belgian lambic brewing — relies on wild airborne yeast and bacteria rather than cultivated strains, producing the distinctively sour and funky flavor the style is known for.",a:"What is spontaneous fermentation?"}
   },
-  "N64 VIDEO GAMES":{
-    100:{c:"This 1996 N64 launch title was the first Mario game in full 3D, and featured an in-game camera operated by a fisherman named Lakitu perched above the player on a cloud.",a:"What is Super Mario 64?"},
-    200:{c:"This 1998 N64 adventure introduced Z-targeting to 3D action games — a lock-on combat mechanic so influential it became standard in virtually every 3D action title that followed.",a:"What is The Legend of Zelda: Ocarina of Time?"},
-    300:{c:"GoldenEye 007 was developed by this British studio, later responsible for Banjo-Kazooie and Perfect Dark, which Microsoft acquired in 2002.",a:"What is Rare?"},
-    400:{c:"This 2000 N64 game by Rare, the follow-up to Ocarina of Time, was famously developed in just over one year and centered on a repeating three-day cycle tied to a falling moon.",a:"What is The Legend of Zelda: Majora's Mask?"},
-    500:{c:"This 1998 N64 platformer by Rare was originally developed under the working title 'Project Dream' and centered on a young boy before pivoting to its now-iconic bear and bird duo.",a:"What is Banjo-Kazooie?"}
+  "EUROPEAN GEOGRAPHY":{
+    100:{c:"This mountain range forms the natural border between France and Spain and contains the tiny landlocked nation of Andorra nestled within its peaks.",a:"What are the Pyrenees?"},
+    200:{c:"This European capital, built on seven hills and bisected by the Tiber River, is the only major city in the world to contain an independent nation — Vatican City — entirely within its boundaries.",a:"What is Rome?"},
+    300:{c:"This narrow strait separating England from France at its closest point spans just 21 miles and connects the North Sea to the broader English Channel.",a:"What is the Strait of Dover?"},
+    400:{c:"This European microstate, completely surrounded by Italy and perched atop Mount Titano, claims to be the world's oldest republic, with a founding date of 301 AD.",a:"What is San Marino?"},
+    500:{c:"The Sognefjord in Norway stretches over 127 miles inland and reaches depths of more than 4,000 feet, making it the longest and deepest example of this type of glacially carved coastal inlet in all of Europe.",a:"What is a fjord?"}
   },
-  "N. AMERICAN TREES & PLANTS":{
-    100:{c:"Found throughout eastern North America, this deciduous tree produces acorns and is considered the continent's single most important wildlife tree for food and habitat.",a:"What is an oak tree?"},
-    200:{c:"This parasitic plant — commonly hung as a Christmas decoration — grows on the branches of hardwood trees, produces white berries toxic to humans, and is spread primarily by birds.",a:"What is mistletoe?"},
-    300:{c:"Native only to the wetlands of North and South Carolina, this carnivorous plant snaps its hinged leaves shut when an insect triggers its sensitive interior hairs twice within 20 seconds.",a:"What is the Venus flytrap?"},
-    400:{c:"Introduced from Japan in the 1870s as an ornamental plant and soil stabilizer, this fast-growing vine now blankets millions of acres across the American South and is nicknamed 'the vine that ate the South.'",a:"What is kudzu?"},
-    500:{c:"This bristlecone pine in the White Mountains of California — kept anonymous by the Forest Service to protect it — is estimated at over 5,000 years old and is considered the oldest known living individual tree on Earth.",a:"What is Methuselah?"}
+  "PGA TOUR":{
+    100:{c:"This golfer, nicknamed The Golden Bear, won 18 major championships across his career — more than any player in the history of professional golf.",a:"Who is Jack Nicklaus?"},
+    200:{c:"Augusta National Golf Club, the home of The Masters tournament held each April, is located in this U.S. state.",a:"What is Georgia?"},
+    300:{c:"This annual PGA Tour event held at Pebble Beach Golf Links features a unique pro-am format played across three courses including Spyglass Hill and Monterey Peninsula Country Club.",a:"What is the AT&T Pebble Beach Pro-Am?"},
+    400:{c:"Winning all four major championships at least once across a career is known by this name — an achievement Phil Mickelson completed in 2021 when he won the PGA Championship.",a:"What is the Career Grand Slam?"},
+    500:{c:"Amen Corner, the most celebrated and strategically critical stretch of holes at Augusta National, consists of holes 11, 12, and this hole number.",a:"What is 13?"}
   }
 };
 const FJ = {
-  category:"ROCKET LEAGUE",
-  c:"Under default Rocket League game settings, collecting a small boost pad gives your car exactly this many boost units.",
-  a:"What is 12?"
+  category:"COLLEGE FOOTBALL COACHES",
+  c:"This coach won seven national championships across his career — one at LSU in 2003 and six at Alabama from 2009 to 2020 — making him the only head coach in college football history to win titles at two different SEC programs.",
+  a:"Who is Nick Saban?"
 };
 const DEFAULT_PLAYERS=[
   {name:"Madison Gibson",color:"#8C2F2F",score:0},
@@ -1857,4 +1857,3 @@ if(VIEW==='player'){
 </script>
 </body>
 </html>
-
