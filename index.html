@@ -619,7 +619,7 @@ h1,h2,h3{font-family:Cambria,Georgia,serif;}
 ═══════════════════════════════════════════ */
 const SUPABASE_URL  = 'https://meahvekqppkvultuqfqz.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lYWh2ZWtxcHBrdnVsdHVxZnF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMDIyOTcsImV4cCI6MjA5ODc3ODI5N30.6Nlv76iybi54XPu30qBqiUPy3T96DmMiAvLhjcG99Ck';
-const SB_OK = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON !== 'YOUR_SUPABASE_ANON_KEY';
+const SB_OK = SUPABASE_URL !== 'https://meahvekqppkvultuqfqz.supabase.co' && SUPABASE_ANON !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lYWh2ZWtxcHBrdnVsdHVxZnF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMDIyOTcsImV4cCI6MjA5ODc3ODI5N30.6Nlv76iybi54XPu30qBqiUPy3T96DmMiAvLhjcG99Ck';
 const sb = SB_OK ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
 
 /* ── VIEW DETECTION ── */
@@ -661,49 +661,49 @@ function sbSetup(){
 /* ═══════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════ */
-const CATS = ["2000s HIP HOP","NBA LEGENDS","STAR WARS","THE OFFICE (US)","WORDPLAY"];
+const CATS = ["VIDEO GAME VILLAINS","BEER & CRAFT BREWING","2000-2010 MOVIES","N64 VIDEO GAMES","N. AMERICAN TREES & PLANTS"];
 const VALS = [100,200,300,400,500];
 const QA = {
-  "2000s HIP HOP":{
-    100:{c:"Eminem's lead single from 8 Mile won the Academy Award for Best Original Song in 2003.",a:"What is 'Lose Yourself'?"},
-    200:{c:"Jay-Z's 2003 a cappella album was mashed with Beatles instrumentals by DJ Danger Mouse to create The Grey Album.",a:"What is The Black Album?"},
-    300:{c:"This 2004 Kanye West debut was named after the Chicago community college where he briefly worked before being signed.",a:"What is The College Dropout?"},
-    400:{c:"This Lil Wayne album sold over one million copies in its first week in 2008 and is widely considered his commercial and critical peak.",a:"What is Tha Carter III?"},
-    500:{c:"Nas's 2001 diss targeting Jay-Z — widely considered the greatest diss track in hip hop history — is titled this.",a:"What is 'Ether'?"}
+  "VIDEO GAME VILLAINS":{
+    100:{c:"This massive ape, Nintendo's very first villain, debuted in a 1981 arcade game of the same name and kidnapped a woman named Pauline.",a:"Who is Donkey Kong?"},
+    200:{c:"This silver-haired antagonist of Final Fantasy VII was once the greatest warrior in SOLDIER before discovering his true origins and vowing to destroy humanity.",a:"Who is Sephiroth?"},
+    300:{c:"This darkly comedic AI villain guides players through Aperture Science's test chambers in Portal while secretly plotting to kill them the entire time.",a:"Who is GLaDOS?"},
+    400:{c:"The self-proclaimed villain of Borderlands 2, this charismatic Hyperion CEO gleefully announces his own evil intentions while hunting the Vault Hunters across Pandora.",a:"Who is Handsome Jack?"},
+    500:{c:"This tyrannical founder of the floating city of Columbia in BioShock Infinite turns out to share a deeply personal and shocking connection with protagonist Booker DeWitt.",a:"Who is Zachary Comstock (Father Comstock)?"}
   },
-  "NBA LEGENDS":{
-    100:{c:"Wilt Chamberlain set the NBA's all-time single-game scoring record on March 2, 1962 with this many points.",a:"What is 100?"},
-    200:{c:"Kobe Bryant's 81-point game in January 2006 came against this opposing team.",a:"Who are the Toronto Raptors?"},
-    300:{c:"Bill Russell won this many NBA championships with the Boston Celtics — more than any player in league history.",a:"What is 11?"},
-    400:{c:"Karl Malone, the NBA's second all-time leading scorer, never won a title despite twice reaching the Finals alongside this Utah Jazz teammate.",a:"Who is John Stockton?"},
-    500:{c:"Michael Jordan's first retirement from the NBA in 1993 came immediately after this personal tragedy.",a:"What is the murder of his father, James Jordan?"}
+  "BEER & CRAFT BREWING":{
+    100:{c:"This broad beer style, fermented cold with bottom-fermenting yeast, is the world's most consumed and includes Budweiser, Coors, and Heineken among its most famous examples.",a:"What is a lager?"},
+    200:{c:"This bitter compound — derived from the cone-shaped flowers of the Humulus lupulus plant — gives beer its bitterness and aroma, and also acts as a natural preservative.",a:"What are hops?"},
+    300:{c:"This three-letter measurement quantifies a beer's bitterness on a scale where a light lager sits around 8 and a double IPA can exceed 100.",a:"What is IBU (International Bitterness Units)?"},
+    400:{c:"This brewing technique — pioneered largely by Sierra Nevada — involves adding hops after fermentation rather than during the boil, maximizing aroma without significantly adding bitterness.",a:"What is dry hopping?"},
+    500:{c:"To legally carry the Authentic Trappist Product seal, this Belgian ale style must be brewed within the walls of a monastery by or under the direct supervision of monks.",a:"What is Trappist ale?"}
   },
-  "STAR WARS":{
-    100:{c:"Han Solo claims the Millennium Falcon made the Kessel Run in less than this many parsecs.",a:"What is 12?"},
-    200:{c:"Emperor Palpatine's given first name, revealed in the prequel trilogy, is this.",a:"What is Sheev?"},
-    300:{c:"Boba Fett made his first canonical screen appearance in this widely mocked 1978 television production.",a:"What is the Star Wars Holiday Special?"},
-    400:{c:"The original actor who played Anakin Skywalker's force ghost in Return of the Jedi — later replaced by Hayden Christensen in the 2004 special edition — is this person.",a:"Who is Sebastian Shaw?"},
-    500:{c:"Luke Skywalker's surname in George Lucas's early script drafts was this before being changed for the final film.",a:"What is Starkiller?"}
+  "2000-2010 MOVIES":{
+    100:{c:"Ridley Scott directed this 2000 Best Picture winner in which Russell Crowe plays a Roman general enslaved and forced to fight as a gladiator to exact revenge on a corrupt emperor.",a:"What is Gladiator?"},
+    200:{c:"Christopher Nolan directed this 2008 film in which Heath Ledger delivered a posthumous Oscar-winning performance as a psychopathic criminal who demands Gotham descend into anarchy.",a:"What is The Dark Knight?"},
+    300:{c:"The Coen Brothers adapted this Cormac McCarthy novel into a 2007 Best Picture winner featuring Javier Bardem as the unstoppable hitman Anton Chigurh and Tommy Lee Jones as a weary Texas sheriff.",a:"What is No Country for Old Men?"},
+    400:{c:"Paul Thomas Anderson directed this 2007 epic in which Daniel Day-Lewis plays ruthless oil prospector Daniel Plainview — delivering one of cinema's most quoted monologues involving a milkshake.",a:"What is There Will Be Blood?"},
+    500:{c:"Alfonso Cuarón directed this 2006 dystopian thriller starring Clive Owen, set in a near-future Britain where humanity has lost the ability to reproduce and a single pregnant woman must be protected at all costs.",a:"What is Children of Men?"}
   },
-  "THE OFFICE (US)":{
-    100:{c:"Dwight Schrute's family farm, operated as a bed and breakfast, primarily grows this crop.",a:"What are beets?"},
-    200:{c:"Michael Scott's self-written feature-length action film stars his alter ego secret agent named this.",a:"Who is Michael Scarn?"},
-    300:{c:"Ryan Howard's startup social media platform — which leads to his arrest for fraud — is named this.",a:"What is WUPHF.com?"},
-    400:{c:"Creed Bratton reveals in the series finale that his real name is this, having stolen the identity of the actual Creed Bratton years earlier.",a:"What is William Charles Schneider?"},
-    500:{c:"The Office's British original was co-created by Ricky Gervais and this writer-actor who played Gareth Krentz's equivalent, Gareth Krentz.",a:"Who is Stephen Merchant?"}
+  "N64 VIDEO GAMES":{
+    100:{c:"This 1996 N64 launch title was the first Mario game in full 3D, and featured an in-game camera operated by a fisherman named Lakitu perched above the player on a cloud.",a:"What is Super Mario 64?"},
+    200:{c:"This 1998 N64 adventure introduced Z-targeting to 3D action games — a lock-on combat mechanic so influential it became standard in virtually every 3D action title that followed.",a:"What is The Legend of Zelda: Ocarina of Time?"},
+    300:{c:"GoldenEye 007 was developed by this British studio, later responsible for Banjo-Kazooie and Perfect Dark, which Microsoft acquired in 2002.",a:"What is Rare?"},
+    400:{c:"This 2000 N64 game by Rare, the follow-up to Ocarina of Time, was famously developed in just over one year and centered on a repeating three-day cycle tied to a falling moon.",a:"What is The Legend of Zelda: Majora's Mask?"},
+    500:{c:"This 1998 N64 platformer by Rare was originally developed under the working title 'Project Dream' and centered on a young boy before pivoting to its now-iconic bear and bird duo.",a:"What is Banjo-Kazooie?"}
   },
-  "WORDPLAY":{
-    100:{c:"A figure of speech using deliberate exaggeration for effect — as in 'I've told you a million times' — is called this.",a:"What is hyperbole?"},
-    200:{c:"The word 'sandwich' is named after an English earl who ate meat between bread to avoid leaving marathon sessions of this activity.",a:"What is gambling?"},
-    300:{c:"This rhetorical device gives human qualities to non-human things — as in 'the wind whispered' or 'justice is blind.'",a:"What is personification?"},
-    400:{c:"The word 'assassin' contains exactly this many instances of the letter S.",a:"What is four?"},
-    500:{c:"Lewis Carroll coined this term for a word that blends two words and their meanings together — like 'smog' blending smoke and fog.",a:"What is a portmanteau?"}
+  "N. AMERICAN TREES & PLANTS":{
+    100:{c:"Found throughout eastern North America, this deciduous tree produces acorns and is considered the continent's single most important wildlife tree for food and habitat.",a:"What is an oak tree?"},
+    200:{c:"This parasitic plant — commonly hung as a Christmas decoration — grows on the branches of hardwood trees, produces white berries toxic to humans, and is spread primarily by birds.",a:"What is mistletoe?"},
+    300:{c:"Native only to the wetlands of North and South Carolina, this carnivorous plant snaps its hinged leaves shut when an insect triggers its sensitive interior hairs twice within 20 seconds.",a:"What is the Venus flytrap?"},
+    400:{c:"Introduced from Japan in the 1870s as an ornamental plant and soil stabilizer, this fast-growing vine now blankets millions of acres across the American South and is nicknamed 'the vine that ate the South.'",a:"What is kudzu?"},
+    500:{c:"This bristlecone pine in the White Mountains of California — kept anonymous by the Forest Service to protect it — is estimated at over 5,000 years old and is considered the oldest known living individual tree on Earth.",a:"What is Methuselah?"}
   }
 };
 const FJ = {
-  category:"SPONGEBOB SQUAREPANTS",
-  c:"In the fan-favorite episode 'Band Geeks,' Squidward's band performs at the Bubble Bowl halftime show. Name the climactic song they perform that reduces the crowd to tears.",
-  a:"What is 'Sweet Victory'?"
+  category:"ROCKET LEAGUE",
+  c:"Under default Rocket League game settings, collecting a small boost pad gives your car exactly this many boost units.",
+  a:"What is 12?"
 };
 const DEFAULT_PLAYERS=[
   {name:"Madison Gibson",color:"#8C2F2F",score:0},
@@ -1568,8 +1568,6 @@ startFinalJeopardy = async function(){
   fjWagers={};fjWagerSubmitted={};fjSeqIdx=0;
   document.getElementById('fjCategoryLabel').textContent=FJ.category;
   // Clear old wagers
-  await sb.from('jeopardy_wagers').delete().gte('id',0).or('id.is.null');
-  // For text PK table, delete all rows differently:
   await sb.from('jeopardy_wagers').delete().neq('player_name','__never__');
   // Set up waiting UI
   document.getElementById('fjWagerPhase').style.display='block';
@@ -1602,6 +1600,7 @@ startFJThinkPhase = async function(){
 ═══════════════════════════════════════════ */
 let pvState='lobby';
 let pvHasBuzzed=false;
+let pvLastKnownPlayers=null; // cache latest player scores from host broadcasts
 
 function pvInit(){
   document.getElementById('screen-title').style.display='none';
@@ -1685,13 +1684,15 @@ function pvSetState(state, payload={}){
     if(payload.clue) document.getElementById('pvClueText').textContent=payload.clue;
     else document.getElementById('pvClueText').style.display='none';
   }
-  if(state==='fj-wager'&&payload.players){
-    const me=payload.players.find(p=>p.name===PV_NAME);
-    const max=me?Math.max(me.score,0):0;
+  if(state==='fj-wager'){
+    const players = payload.players || pvLastKnownPlayers;
+    const me = players ? players.find(p=>p.name===PV_NAME) : null;
+    const myScore = me ? me.score : 0;
+    const max = Math.max(myScore, 0);
     document.getElementById('pvFJSub').textContent=
-      `Your score: ${me?fmtScore(me.score):'$0'} — Max wager: $${max}`;
+      `Your score: ${fmtScore(myScore)} — Max wager: $${max}`;
     const inp=document.getElementById('pvWagerInput');
-    inp.max=max;inp.value='';inp.placeholder=`Wager $0 – $${max}`;
+    inp.max=max; inp.value=''; inp.placeholder=`Wager $0 – $${max}`;
     setTimeout(()=>inp.focus(),120);
   }
   if(state==='fj-think'&&payload.clue){
@@ -1701,6 +1702,7 @@ function pvSetState(state, payload={}){
 
 function pvUpdateScore(payload){
   if(!payload.players) return;
+  pvLastKnownPlayers=payload.players;
   const me=payload.players.find(p=>p.name===PV_NAME);
   if(me) document.getElementById('pvScore').textContent=fmtScore(me.score);
 }
