@@ -617,7 +617,7 @@ h1,h2,h3{font-family:Cambria,Georgia,serif;}
    deploy to Vercel. Leave as-is to play
    locally without real-time features.
 ═══════════════════════════════════════════ */
-const SUPABASE_URL  = 'https://meahvekqppkvultuqfqz.supabase.co/rest/v1/';
+const SUPABASE_URL  = 'https://meahvekqppkvultuqfqz.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lYWh2ZWtxcHBrdnVsdHVxZnF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMDIyOTcsImV4cCI6MjA5ODc3ODI5N30.6Nlv76iybi54XPu30qBqiUPy3T96DmMiAvLhjcG99Ck';
 const SB_OK = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON !== 'YOUR_SUPABASE_ANON_KEY';
 const sb = SB_OK ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
@@ -661,49 +661,49 @@ function sbSetup(){
 /* ═══════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════ */
-const CATS = ["90s SATURDAY CARTOONS","POKEMON GEN 1","2000s & BEYOND MOVIES","N. AMERICAN WILDLIFE","FOOD & DRINK"];
+const CATS = ["2000s HIP HOP","NBA LEGENDS","STAR WARS","THE OFFICE (US)","WORDPLAY"];
 const VALS = [100,200,300,400,500];
 const QA = {
-  "90s SATURDAY CARTOONS":{
-    100:{c:"Angelica Pickles's beloved ratty blond doll in Rugrats goes by this name.",a:"What is Cynthia?"},
-    200:{c:"Arnold's last name — never spoken in the original Hey Arnold series — was confirmed by creator Craig Bartlett to be this.",a:"What is Shortman?"},
-    300:{c:"The secret horror storytelling club in Are You Afraid of the Dark, which meets around a campfire in the woods, is called this.",a:"What is the Midnight Society?"},
-    400:{c:"Doug Funnie's self-imagined superhero alter ego, who wears a belted uniform and a bathtowel cape, goes by this name.",a:"Who is Quailman?"},
-    500:{c:"Mojo Jojo and the Powerpuff Girls share an origin — all four were created when Professor Utonium accidentally introduced this ingredient into his experiment.",a:"What is Chemical X?"}
+  "2000s HIP HOP":{
+    100:{c:"Eminem's lead single from 8 Mile won the Academy Award for Best Original Song in 2003.",a:"What is 'Lose Yourself'?"},
+    200:{c:"Jay-Z's 2003 a cappella album was mashed with Beatles instrumentals by DJ Danger Mouse to create The Grey Album.",a:"What is The Black Album?"},
+    300:{c:"This 2004 Kanye West debut was named after the Chicago community college where he briefly worked before being signed.",a:"What is The College Dropout?"},
+    400:{c:"This Lil Wayne album sold over one million copies in its first week in 2008 and is widely considered his commercial and critical peak.",a:"What is Tha Carter III?"},
+    500:{c:"Nas's 2001 diss targeting Jay-Z — widely considered the greatest diss track in hip hop history — is titled this.",a:"What is 'Ether'?"}
   },
-  "POKEMON GEN 1":{
-    100:{c:"Rhydon holds the distinction of being the very first Pokemon ever designed by Game Freak. This is its Pokedex number.",a:"What is 112?"},
-    200:{c:"This is the only move in Generation 1 with a base power of 150, leaving the user unable to act on the following turn.",a:"What is Hyper Beam?"},
-    300:{c:"Name all three elemental stones that trigger Eevee's three possible evolutions in Generation 1.",a:"What are the Fire Stone, Water Stone, and Thunder Stone?"},
-    400:{c:"The item duplication glitch triggered alongside a MissingNo. encounter on Cinnabar Island multiplies whichever item sits in this specific slot of the player's bag.",a:"What is the sixth item slot?"},
-    500:{c:"Despite the type chart listing Ghost as super effective against Psychic, a Generation 1 programming bug caused Ghost-type moves to deal this amount of damage to Psychic-type Pokemon.",a:"What is zero (no damage)?"}
+  "NBA LEGENDS":{
+    100:{c:"Wilt Chamberlain set the NBA's all-time single-game scoring record on March 2, 1962 with this many points.",a:"What is 100?"},
+    200:{c:"Kobe Bryant's 81-point game in January 2006 came against this opposing team.",a:"Who are the Toronto Raptors?"},
+    300:{c:"Bill Russell won this many NBA championships with the Boston Celtics — more than any player in league history.",a:"What is 11?"},
+    400:{c:"Karl Malone, the NBA's second all-time leading scorer, never won a title despite twice reaching the Finals alongside this Utah Jazz teammate.",a:"Who is John Stockton?"},
+    500:{c:"Michael Jordan's first retirement from the NBA in 1993 came immediately after this personal tragedy.",a:"What is the murder of his father, James Jordan?"}
   },
-  "2000s & BEYOND MOVIES":{
-    100:{c:"Joaquin Phoenix performed all his own vocals as Johnny Cash in this 2005 biopic, winning a Golden Globe for the role.",a:"What is Walk the Line?"},
-    200:{c:"Christopher Nolan's 2010 dream-heist film features a Paris city-folding sequence filmed entirely on a rotating practical set with no CGI.",a:"What is Inception?"},
-    300:{c:"Paul Thomas Anderson's 2007 film takes its title from an Upton Sinclair novel and features Daniel Day-Lewis as a ruthless California oil prospector.",a:"What is There Will Be Blood?"},
-    400:{c:"This director, who created the original Mad Max trilogy in the 1970s and 80s, returned to the franchise with Fury Road in 2015, which won six Academy Awards.",a:"Who is George Miller?"},
-    500:{c:"Steven Soderbergh won Best Director at the 2001 Oscars for this drug-trade film shot with three parallel storylines, each in a distinct color palette.",a:"What is Traffic?"}
+  "STAR WARS":{
+    100:{c:"Han Solo claims the Millennium Falcon made the Kessel Run in less than this many parsecs.",a:"What is 12?"},
+    200:{c:"Emperor Palpatine's given first name, revealed in the prequel trilogy, is this.",a:"What is Sheev?"},
+    300:{c:"Boba Fett made his first canonical screen appearance in this widely mocked 1978 television production.",a:"What is the Star Wars Holiday Special?"},
+    400:{c:"The original actor who played Anakin Skywalker's force ghost in Return of the Jedi — later replaced by Hayden Christensen in the 2004 special edition — is this person.",a:"Who is Sebastian Shaw?"},
+    500:{c:"Luke Skywalker's surname in George Lucas's early script drafts was this before being changed for the final film.",a:"What is Starkiller?"}
   },
-  "N. AMERICAN WILDLIFE":{
-    100:{c:"The bald eagle was removed from the U.S. Endangered Species List in this year, following decades of federal protection after DDT was banned.",a:"What is 2007?"},
-    200:{c:"This is the only big cat species native to North America and possesses the strongest bite force of any land mammal in the Western Hemisphere.",a:"What is the jaguar?"},
-    300:{c:"Monarch butterflies overwinter exclusively in the mountain forests of this Mexican state, clustering on oyamel fir trees in numbers reaching hundreds of millions.",a:"What is Michoacan?"},
-    400:{c:"The wood frog survives North American winters by allowing the majority of the water in its body to do this — a feat unique among vertebrates on the continent.",a:"What is freeze solid?"},
-    500:{c:"This jawless parasitic fish entered the Great Lakes via the Welland Canal and decimated native fish populations, and is considered the most destructive aquatic invasive species in North American history.",a:"What is the sea lamprey?"}
+  "THE OFFICE (US)":{
+    100:{c:"Dwight Schrute's family farm, operated as a bed and breakfast, primarily grows this crop.",a:"What are beets?"},
+    200:{c:"Michael Scott's self-written feature-length action film stars his alter ego secret agent named this.",a:"Who is Michael Scarn?"},
+    300:{c:"Ryan Howard's startup social media platform — which leads to his arrest for fraud — is named this.",a:"What is WUPHF.com?"},
+    400:{c:"Creed Bratton reveals in the series finale that his real name is this, having stolen the identity of the actual Creed Bratton years earlier.",a:"What is William Charles Schneider?"},
+    500:{c:"The Office's British original was co-created by Ricky Gervais and this writer-actor who played Gareth Krentz's equivalent, Gareth Krentz.",a:"Who is Stephen Merchant?"}
   },
-  "FOOD & DRINK":{
-    100:{c:"This French culinary term names the aromatic base of diced onion, celery, and carrot used to start virtually every French braise, stock, and sauce.",a:"What is mirepoix?"},
-    200:{c:"Authentic Roman carbonara calls for this specific cured pork product made from pig cheek — not pancetta, not bacon.",a:"What is guanciale?"},
-    300:{c:"In consomme clarification, this mixture of ground meat, egg whites, and aromatics rises to form a mass that traps impurities and produces a crystal-clear broth.",a:"What is a raft (or clearmeat)?"},
-    400:{c:"The fifth basic taste, officially recognized by scientists in 2002 and activated by glutamate compounds in aged cheese, soy sauce, and mushrooms, goes by this Japanese name.",a:"What is umami?"},
-    500:{c:"Named for the French chemist who documented it in 1912, this reaction between amino acids and reducing sugars produces the browning of bread crusts, seared meats, and roasted coffee.",a:"What is the Maillard reaction?"}
+  "WORDPLAY":{
+    100:{c:"A figure of speech using deliberate exaggeration for effect — as in 'I've told you a million times' — is called this.",a:"What is hyperbole?"},
+    200:{c:"The word 'sandwich' is named after an English earl who ate meat between bread to avoid leaving marathon sessions of this activity.",a:"What is gambling?"},
+    300:{c:"This rhetorical device gives human qualities to non-human things — as in 'the wind whispered' or 'justice is blind.'",a:"What is personification?"},
+    400:{c:"The word 'assassin' contains exactly this many instances of the letter S.",a:"What is four?"},
+    500:{c:"Lewis Carroll coined this term for a word that blends two words and their meanings together — like 'smog' blending smoke and fog.",a:"What is a portmanteau?"}
   }
 };
 const FJ = {
-  category:"LORD OF THE RINGS FILMS",
-  c:"In The Return of the King, Eowyn kills the Witch-king — but a hobbit stabs him first, breaking his power and making her killing blow possible. Name that hobbit.",
-  a:"Who is Merry (Meriadoc Brandybuck)?"
+  category:"SPONGEBOB SQUAREPANTS",
+  c:"In the fan-favorite episode 'Band Geeks,' Squidward's band performs at the Bubble Bowl halftime show. Name the climactic song they perform that reduces the crowd to tears.",
+  a:"What is 'Sweet Victory'?"
 };
 const DEFAULT_PLAYERS=[
   {name:"Madison Gibson",color:"#8C2F2F",score:0},
