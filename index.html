@@ -559,6 +559,10 @@ h1,h2,h3{font-family:Cambria,Georgia,serif;}
     <div class="pv-body">
       <div id="pv-lobby" class="pv-state">
         <div class="pv-msg">Waiting for a question...<br>You'll see a BUZZ button when one opens.</div>
+        <div style="margin-top:28px;border-top:1px solid rgba(255,255,255,.1);padding-top:20px;">
+          <div style="font-size:.78rem;color:rgba(255,255,255,.35);margin-bottom:10px;">Host starting Final Jeopardy?</div>
+          <button class="pv-join-btn" style="padding:12px;font-size:.95rem;max-width:280px;" onclick="pvManualFJWager()">⭐ Enter My FJ Wager</button>
+        </div>
       </div>
       <div id="pv-buzz" class="pv-state" style="display:none">
         <div class="pv-clue" id="pvClueText"></div>
@@ -1721,6 +1725,14 @@ async function submitBuzz(){
     res.textContent='Buzzed! Waiting for host...';
     res.style.cssText=`color:${PV_COLOR};border-color:${PV_COLOR};`;
   }
+}
+
+function pvManualFJWager(){
+  // Player manually triggers FJ wager screen
+  // Use cached score from last broadcast, or fall back to 0
+  const players = pvLastKnownPlayers;
+  const me = players ? players.find(p=>p.name===PV_NAME) : null;
+  pvSetState('fj-wager', me ? {players} : {});
 }
 
 async function submitPlayerWager(){
