@@ -617,8 +617,9 @@ h1,h2,h3{font-family:Cambria,Georgia,serif;}
    deploy to Vercel. Leave as-is to play
    locally without real-time features.
 ═══════════════════════════════════════════ */
-const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL  = 'https://meahvekqppkvultuqfqz.supabase.co/rest/v1/';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1lYWh2ZWtxcHBrdnVsdHVxZnF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMDIyOTcsImV4cCI6MjA5ODc3ODI5N30.6Nlv76iybi54XPu30qBqiUPy3T96DmMiAvLhjcG99Ck
+';
 const SB_OK = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON !== 'YOUR_SUPABASE_ANON_KEY';
 const sb = SB_OK ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null;
 
@@ -661,49 +662,49 @@ function sbSetup(){
 /* ═══════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════ */
-const CATS = ["90s SATURDAY CARTOONS","POKEMON GEN 1","2000s & BEYOND MOVIES","N. AMERICAN WILDLIFE","FOOD & DRINK"];
+const CATS = ["VIDEO GAME VILLAINS","BEER & CRAFT BREWING","2000-2010 MOVIES","N64 VIDEO GAMES","N. AMERICAN TREES & PLANTS"];
 const VALS = [100,200,300,400,500];
 const QA = {
-  "90s SATURDAY CARTOONS":{
-    100:{c:"This Nickelodeon cartoon, which premiered in 1991, follows a shy anthropomorphic dog named Rocko who emigrates from Australia to the fictional American city of O-Town.",a:"What is Rocko's Modern Life?"},
-    200:{c:"This cartoon featured a highly intelligent mouse named Brain and his dim-witted companion Pinky, who each night attempted a new scheme for world domination — originally as segments within Animaniacs before spinning off into their own series.",a:"What is Pinky and the Brain?"},
-    300:{c:"This Cartoon Network series, premiering in 1996, follows a boy genius who secretly maintains a vast laboratory hidden behind a bookcase in his bedroom — unknown to his parents but constantly threatened by his older sister Dee Dee.",a:"What is Dexter's Laboratory?"},
-    400:{c:"In the original Rugrats series, Tommy Pickles always carried this specific tool hidden in his diaper — the item he most frequently used to escape the playpen and launch the babies into adventure.",a:"What is a screwdriver?"},
-    500:{c:"This Fox Kids animated series, which premiered in 1992 and became one of the decade's highest-rated Saturday morning cartoons, was based on a comic book property and featured mutant heroes led by Cyclops and Professor X.",a:"What is X-Men: The Animated Series?"}
+  "VIDEO GAME VILLAINS":{
+    100:{c:"This massive ape, Nintendo's very first villain, debuted in a 1981 arcade game of the same name and kidnapped a woman named Pauline.",a:"Who is Donkey Kong?"},
+    200:{c:"This silver-haired antagonist of Final Fantasy VII was once the greatest warrior in SOLDIER before discovering his true origins and vowing to destroy humanity.",a:"Who is Sephiroth?"},
+    300:{c:"This darkly comedic AI villain guides players through Aperture Science's test chambers in Portal while secretly plotting to kill them the entire time.",a:"Who is GLaDOS?"},
+    400:{c:"The self-proclaimed villain of Borderlands 2, this charismatic Hyperion CEO gleefully announces his own evil intentions while hunting the Vault Hunters across Pandora.",a:"Who is Handsome Jack?"},
+    500:{c:"This tyrannical founder of the floating city of Columbia in BioShock Infinite turns out to share a deeply personal and shocking connection with protagonist Booker DeWitt.",a:"Who is Zachary Comstock (Father Comstock)?"}
   },
-  "POKEMON GEN 1":{
-    100:{c:"This Water-type starter Pokemon, number 007 in the original Pokedex, eventually evolves into Blastoise and was one of three starters available at the beginning of Pokemon Red and Blue.",a:"What is Squirtle?"},
-    200:{c:"This Pokemon is the only one in Generation 1 that can learn the move Splash — a Normal-type move that has absolutely no effect in battle — and is widely considered the most useless Pokemon in competitive play before evolving.",a:"What is Magikarp?"},
-    300:{c:"This Ghost and Poison-type Pokemon — one of only three Ghost-types in all of Generation 1 — is found haunting the Pokemon Tower in Lavender Town and evolves from Gastly via trading.",a:"What is Haunter?"},
-    400:{c:"This Pokemon, number 132 in the original Pokedex, is the only Generation 1 Pokemon that knows the move Transform, allowing it to become a perfect copy of any opponent it faces in battle.",a:"What is Ditto?"},
-    500:{c:"This glitch entity — not officially one of the original 151 Pokemon — could be encountered in the original Red and Blue versions through a specific sequence involving the old man in Viridian City and the coastline outside Cinnabar Island.",a:"What is MissingNo.?"}
+  "BEER & CRAFT BREWING":{
+    100:{c:"This broad beer style, fermented cold with bottom-fermenting yeast, is the world's most consumed and includes Budweiser, Coors, and Heineken among its most famous examples.",a:"What is a lager?"},
+    200:{c:"This bitter compound — derived from the cone-shaped flowers of the Humulus lupulus plant — gives beer its bitterness and aroma, and also acts as a natural preservative.",a:"What are hops?"},
+    300:{c:"This three-letter measurement quantifies a beer's bitterness on a scale where a light lager sits around 8 and a double IPA can exceed 100.",a:"What is IBU (International Bitterness Units)?"},
+    400:{c:"This brewing technique — pioneered largely by Sierra Nevada — involves adding hops after fermentation rather than during the boil, maximizing aroma without significantly adding bitterness.",a:"What is dry hopping?"},
+    500:{c:"To legally carry the Authentic Trappist Product seal, this Belgian ale style must be brewed within the walls of a monastery by or under the direct supervision of monks.",a:"What is Trappist ale?"}
   },
-  "2000s & BEYOND MOVIES":{
-    100:{c:"This 2008 Marvel Studios film starring Robert Downey Jr. launched the Marvel Cinematic Universe, following a billionaire weapons manufacturer who builds a powered suit of armor to escape captivity.",a:"What is Iron Man?"},
-    200:{c:"Christopher Nolan directed this 2010 film starring Leonardo DiCaprio as a thief who specializes in entering people's dreams to extract information — or in this case, to plant an idea deep within a target's subconscious.",a:"What is Inception?"},
-    300:{c:"Alfonso Cuaron directed this 2013 film starring Sandra Bullock and George Clooney as astronauts stranded in orbit after their shuttle is destroyed — it won seven Academy Awards including Best Director.",a:"What is Gravity?"},
-    400:{c:"This 2019 South Korean thriller directed by Bong Joon-ho became the first non-English language film in Oscar history to win the Academy Award for Best Picture.",a:"What is Parasite?"},
-    500:{c:"David Fincher directed this 2010 film with a screenplay by Aaron Sorkin that dramatizes the founding of Facebook, starring Jesse Eisenberg as Mark Zuckerberg and winning three Academy Awards.",a:"What is The Social Network?"}
+  "2000-2010 MOVIES":{
+    100:{c:"Ridley Scott directed this 2000 Best Picture winner in which Russell Crowe plays a Roman general enslaved and forced to fight as a gladiator to exact revenge on a corrupt emperor.",a:"What is Gladiator?"},
+    200:{c:"Christopher Nolan directed this 2008 film in which Heath Ledger delivered a posthumous Oscar-winning performance as a psychopathic criminal who demands Gotham descend into anarchy.",a:"What is The Dark Knight?"},
+    300:{c:"The Coen Brothers adapted this Cormac McCarthy novel into a 2007 Best Picture winner featuring Javier Bardem as the unstoppable hitman Anton Chigurh and Tommy Lee Jones as a weary Texas sheriff.",a:"What is No Country for Old Men?"},
+    400:{c:"Paul Thomas Anderson directed this 2007 epic in which Daniel Day-Lewis plays ruthless oil prospector Daniel Plainview — delivering one of cinema's most quoted monologues involving a milkshake.",a:"What is There Will Be Blood?"},
+    500:{c:"Alfonso Cuarón directed this 2006 dystopian thriller starring Clive Owen, set in a near-future Britain where humanity has lost the ability to reproduce and a single pregnant woman must be protected at all costs.",a:"What is Children of Men?"}
   },
-  "N. AMERICAN WILDLIFE":{
-    100:{c:"This massive land animal — the heaviest in the Americas at up to 1,500 pounds — was hunted to near extinction in the 19th century before conservation efforts helped restore its population, particularly in Yellowstone National Park.",a:"What is the American bison (buffalo)?"},
-    200:{c:"This semi-aquatic North American rodent, the largest on the continent, builds elaborate dams and lodges from sticks and mud — engineering that significantly alters wetland ecosystems and creates habitat for dozens of other species.",a:"What is a beaver?"},
-    300:{c:"This North American bird, with a wingspan of up to 9.5 feet, was declared extinct in the wild in 1987 before a captive breeding and reintroduction program made it one of the most celebrated conservation success stories in U.S. history.",a:"What is the California condor?"},
-    400:{c:"This marine mammal, found along the Pacific Coast of North America, is one of the few non-primate animals known to use tools — specifically rocks balanced on its chest to crack open shellfish while floating on its back.",a:"What is the sea otter?"},
-    500:{c:"This predator was reintroduced to Yellowstone National Park in 1995 after a 70-year absence, triggering a cascade of ecological changes so sweeping — including altered river courses — that scientists use it as the defining example of a trophic cascade.",a:"What is the gray wolf?"}
+  "N64 VIDEO GAMES":{
+    100:{c:"This 1996 N64 launch title was the first Mario game in full 3D, and featured an in-game camera operated by a fisherman named Lakitu perched above the player on a cloud.",a:"What is Super Mario 64?"},
+    200:{c:"This 1998 N64 adventure introduced Z-targeting to 3D action games — a lock-on combat mechanic so influential it became standard in virtually every 3D action title that followed.",a:"What is The Legend of Zelda: Ocarina of Time?"},
+    300:{c:"GoldenEye 007 was developed by this British studio, later responsible for Banjo-Kazooie and Perfect Dark, which Microsoft acquired in 2002.",a:"What is Rare?"},
+    400:{c:"This 2000 N64 game by Rare, the follow-up to Ocarina of Time, was famously developed in just over one year and centered on a repeating three-day cycle tied to a falling moon.",a:"What is The Legend of Zelda: Majora's Mask?"},
+    500:{c:"This 1998 N64 platformer by Rare was originally developed under the working title 'Project Dream' and centered on a young boy before pivoting to its now-iconic bear and bird duo.",a:"What is Banjo-Kazooie?"}
   },
-  "FOOD & DRINK":{
-    100:{c:"This cooking technique involves sealing food in vacuum bags and submerging them in precisely temperature-controlled water for extended periods, producing evenly cooked proteins that are impossible to achieve through conventional methods.",a:"What is sous vide?"},
-    200:{c:"This Italian cheese — made from the milk of water buffaloes rather than cows, and protected by European Union designation of origin laws — is the authentic topping of a traditional Neapolitan pizza Margherita.",a:"What is mozzarella di bufala (buffalo mozzarella)?"},
-    300:{c:"This Japanese fermented paste — produced from soybeans, rice, or barley — comes in white, yellow, and red varieties, with darker versions carrying more intense flavor due to longer fermentation periods.",a:"What is miso?"},
-    400:{c:"This French culinary method involves searing meat at high heat and then cooking it low and slow in liquid, and is the foundational technique behind dishes like beef bourguignon and coq au vin.",a:"What is braising?"},
-    500:{c:"This spice, derived from the hand-harvested dried stigmas of a specific crocus flower, requires approximately 75,000 blooms to produce a single pound — making it the most expensive spice in the world by weight.",a:"What is saffron?"}
+  "N. AMERICAN TREES & PLANTS":{
+    100:{c:"Found throughout eastern North America, this deciduous tree produces acorns and is considered the continent's single most important wildlife tree for food and habitat.",a:"What is an oak tree?"},
+    200:{c:"This parasitic plant — commonly hung as a Christmas decoration — grows on the branches of hardwood trees, produces white berries toxic to humans, and is spread primarily by birds.",a:"What is mistletoe?"},
+    300:{c:"Native only to the wetlands of North and South Carolina, this carnivorous plant snaps its hinged leaves shut when an insect triggers its sensitive interior hairs twice within 20 seconds.",a:"What is the Venus flytrap?"},
+    400:{c:"Introduced from Japan in the 1870s as an ornamental plant and soil stabilizer, this fast-growing vine now blankets millions of acres across the American South and is nicknamed 'the vine that ate the South.'",a:"What is kudzu?"},
+    500:{c:"This bristlecone pine in the White Mountains of California — kept anonymous by the Forest Service to protect it — is estimated at over 5,000 years old and is considered the oldest known living individual tree on Earth.",a:"What is Methuselah?"}
   }
 };
 const FJ = {
-  category:"LORD OF THE RINGS FILMS",
-  c:"In The Return of the King, Eowyn fulfills the prophecy that no man can kill the Witch-king of Angmar by delivering the killing blow herself. But she is aided by a hobbit who stabs the Witch-king first, breaking his power and making the kill possible. Name that hobbit.",
-  a:"Who is Merry (Meriadoc Brandybuck)?"
+  category:"ROCKET LEAGUE",
+  c:"Under default Rocket League game settings, collecting a small boost pad gives your car exactly this many boost units.",
+  a:"What is 12?"
 };
 const DEFAULT_PLAYERS=[
   {name:"Madison Gibson",color:"#8C2F2F",score:0},
