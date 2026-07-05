@@ -665,49 +665,49 @@ function sbSetup(){
 /* ═══════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════ */
-const CATS = ["VIDEO GAME VILLAINS","BEER & CRAFT BREWING","2000-2010 MOVIES","N64 VIDEO GAMES","N. AMERICAN TREES & PLANTS"];
+const CATS = ["BREAKING BAD","NFL QUARTERBACKS","POTENT POTABLES","EUROPEAN GEOGRAPHY","PGA TOUR"];
 const VALS = [100,200,300,400,500];
 const QA = {
-  "VIDEO GAME VILLAINS":{
-    100:{c:"This massive ape, Nintendo's very first villain, debuted in a 1981 arcade game of the same name and kidnapped a woman named Pauline.",a:"Who is Donkey Kong?"},
-    200:{c:"This silver-haired antagonist of Final Fantasy VII was once the greatest warrior in SOLDIER before discovering his true origins and vowing to destroy humanity.",a:"Who is Sephiroth?"},
-    300:{c:"This darkly comedic AI villain guides players through Aperture Science's test chambers in Portal while secretly plotting to kill them the entire time.",a:"Who is GLaDOS?"},
-    400:{c:"The self-proclaimed villain of Borderlands 2, this charismatic Hyperion CEO gleefully announces his own evil intentions while hunting the Vault Hunters across Pandora.",a:"Who is Handsome Jack?"},
-    500:{c:"This tyrannical founder of the floating city of Columbia in BioShock Infinite turns out to share a deeply personal and shocking connection with protagonist Booker DeWitt.",a:"Who is Zachary Comstock (Father Comstock)?"}
+  "BREAKING BAD":{
+    100:{c:"Walt poisons this child with lily of the valley berries to manipulate Jesse into turning against Gus Fring.",a:"Who is Brock?"},
+    200:{c:"The gas Walt synthesizes from red phosphorus and pseudoephedrine byproduct to kill Emilio in the RV pilot is this.",a:"What is phosphine gas?"},
+    300:{c:"Hank connects Heisenberg to Walt by matching his handwriting to an inscription inside this book found in Gale Boetticher's apartment.",a:"What is Leaves of Grass?"},
+    400:{c:"This is the name of the vacuum cleaner repairman who provides full identity-erasure services to Walt, Saul, and others.",a:"Who is Ed (Ed Galbraith)?"},
+    500:{c:"Gus Fring's decades-long vendetta against the Juarez cartel began when this specific cartel boss executed his partner Max.",a:"Who is Don Eladio?"}
   },
-  "BEER & CRAFT BREWING":{
-    100:{c:"This broad beer style, fermented cold with bottom-fermenting yeast, is the world's most consumed and includes Budweiser, Coors, and Heineken among its most famous examples.",a:"What is a lager?"},
-    200:{c:"This bitter compound — derived from the cone-shaped flowers of the Humulus lupulus plant — gives beer its bitterness and aroma, and also acts as a natural preservative.",a:"What are hops?"},
-    300:{c:"This three-letter measurement quantifies a beer's bitterness on a scale where a light lager sits around 8 and a double IPA can exceed 100.",a:"What is IBU (International Bitterness Units)?"},
-    400:{c:"This brewing technique — pioneered largely by Sierra Nevada — involves adding hops after fermentation rather than during the boil, maximizing aroma without significantly adding bitterness.",a:"What is dry hopping?"},
-    500:{c:"To legally carry the Authentic Trappist Product seal, this Belgian ale style must be brewed within the walls of a monastery by or under the direct supervision of monks.",a:"What is Trappist ale?"}
+  "NFL QUARTERBACKS":{
+    100:{c:"Peyton Manning set the NFL single-season touchdown record in 2013 with this many scoring throws.",a:"What is 55?"},
+    200:{c:"Drew Brees set the record for consecutive games with a touchdown pass at 54, achieving the streak while playing for this franchise.",a:"What are the New Orleans Saints?"},
+    300:{c:"Terry Bradshaw won Super Bowl MVP honors twice with Pittsburgh — these are the Roman numerals of those two Super Bowls.",a:"What are XIII and XIV?"},
+    400:{c:"This quarterback completed 88 percent of his passes in Super Bowl XXIV, the highest completion percentage in Super Bowl history at the time.",a:"Who is Joe Montana?"},
+    500:{c:"The only quarterback to win a Super Bowl while completing fewer than 50 percent of his passes, doing so for the Giants in Super Bowl XXV.",a:"Who is Jeff Hostetler?"}
   },
-  "2000-2010 MOVIES":{
-    100:{c:"Ridley Scott directed this 2000 Best Picture winner in which Russell Crowe plays a Roman general enslaved and forced to fight as a gladiator to exact revenge on a corrupt emperor.",a:"What is Gladiator?"},
-    200:{c:"Christopher Nolan directed this 2008 film in which Heath Ledger delivered a posthumous Oscar-winning performance as a psychopathic criminal who demands Gotham descend into anarchy.",a:"What is The Dark Knight?"},
-    300:{c:"The Coen Brothers adapted this Cormac McCarthy novel into a 2007 Best Picture winner featuring Javier Bardem as the unstoppable hitman Anton Chigurh and Tommy Lee Jones as a weary Texas sheriff.",a:"What is No Country for Old Men?"},
-    400:{c:"Paul Thomas Anderson directed this 2007 epic in which Daniel Day-Lewis plays ruthless oil prospector Daniel Plainview — delivering one of cinema's most quoted monologues involving a milkshake.",a:"What is There Will Be Blood?"},
-    500:{c:"Alfonso Cuarón directed this 2006 dystopian thriller starring Clive Owen, set in a near-future Britain where humanity has lost the ability to reproduce and a single pregnant woman must be protected at all costs.",a:"What is Children of Men?"}
+  "POTENT POTABLES":{
+    100:{c:"Islay Scotch whisky gets its distinctive smoky flavor from drying malted barley over this specific fuel source.",a:"What is peat?"},
+    200:{c:"A Negroni contains equal parts gin, sweet vermouth, and this Italian bitter liqueur.",a:"What is Campari?"},
+    300:{c:"Mezcal can legally be produced from over 30 agave varieties; tequila is restricted to this single species.",a:"What is blue agave (Weber blue agave)?"},
+    400:{c:"This Hungarian dessert wine, made from botrytis-affected grapes, measures its sweetness level in units called puttonyos.",a:"What is Tokaji?"},
+    500:{c:"Under methode champenoise, the second fermentation that creates Champagne's bubbles occurs inside this specific vessel.",a:"What is the bottle?"}
   },
-  "N64 VIDEO GAMES":{
-    100:{c:"This 1996 N64 launch title was the first Mario game in full 3D, and featured an in-game camera operated by a fisherman named Lakitu perched above the player on a cloud.",a:"What is Super Mario 64?"},
-    200:{c:"This 1998 N64 adventure introduced Z-targeting to 3D action games — a lock-on combat mechanic so influential it became standard in virtually every 3D action title that followed.",a:"What is The Legend of Zelda: Ocarina of Time?"},
-    300:{c:"GoldenEye 007 was developed by this British studio, later responsible for Banjo-Kazooie and Perfect Dark, which Microsoft acquired in 2002.",a:"What is Rare?"},
-    400:{c:"This 2000 N64 game by Rare, the follow-up to Ocarina of Time, was famously developed in just over one year and centered on a repeating three-day cycle tied to a falling moon.",a:"What is The Legend of Zelda: Majora's Mask?"},
-    500:{c:"This 1998 N64 platformer by Rare was originally developed under the working title 'Project Dream' and centered on a young boy before pivoting to its now-iconic bear and bird duo.",a:"What is Banjo-Kazooie?"}
+  "EUROPEAN GEOGRAPHY":{
+    100:{c:"This microstate, bordered only by Switzerland and Austria, has a capital called Vaduz and is one of only two doubly landlocked countries in the world.",a:"What is Liechtenstein?"},
+    200:{c:"The Bosphorus Strait bisects this city — the only metropolis on Earth that straddles two continents.",a:"What is Istanbul?"},
+    300:{c:"Name any one of the four countries that share borders with both Germany and France simultaneously.",a:"What is Luxembourg, Belgium, Switzerland, or Austria?"},
+    400:{c:"This autonomous Spanish region declared an illegal independence referendum in 2017, resulting in the arrest of its regional president and direct rule from Madrid.",a:"What is Catalonia?"},
+    500:{c:"The breakaway region of Transnistria, which declared independence in 1990 and hosts Russian troops to this day, is internationally recognized as part of this country.",a:"What is Moldova?"}
   },
-  "N. AMERICAN TREES & PLANTS":{
-    100:{c:"Found throughout eastern North America, this deciduous tree produces acorns and is considered the continent's single most important wildlife tree for food and habitat.",a:"What is an oak tree?"},
-    200:{c:"This parasitic plant — commonly hung as a Christmas decoration — grows on the branches of hardwood trees, produces white berries toxic to humans, and is spread primarily by birds.",a:"What is mistletoe?"},
-    300:{c:"Native only to the wetlands of North and South Carolina, this carnivorous plant snaps its hinged leaves shut when an insect triggers its sensitive interior hairs twice within 20 seconds.",a:"What is the Venus flytrap?"},
-    400:{c:"Introduced from Japan in the 1870s as an ornamental plant and soil stabilizer, this fast-growing vine now blankets millions of acres across the American South and is nicknamed 'the vine that ate the South.'",a:"What is kudzu?"},
-    500:{c:"This bristlecone pine in the White Mountains of California — kept anonymous by the Forest Service to protect it — is estimated at over 5,000 years old and is considered the oldest known living individual tree on Earth.",a:"What is Methuselah?"}
+  "PGA TOUR":{
+    100:{c:"Tiger Woods has won The Masters this many times.",a:"What is five?"},
+    200:{c:"A score of three under par on a single hole — rarer than a hole-in-one at the professional level — is called this.",a:"What is an albatross (double eagle)?"},
+    300:{c:"Jack Nicklaus won his record sixth Masters title in 1986 at this age, making him the oldest major champion in history at the time.",a:"What is 46?"},
+    400:{c:"The three holes that compose Amen Corner at Augusta National are holes 11, 12, and this number.",a:"What is 13?"},
+    500:{c:"Phil Mickelson broke the oldest-major-champion record at the 2021 PGA Championship — the previous record was held by this golfer, who won the 1968 PGA Championship at age 48.",a:"Who is Julius Boros?"}
   }
 };
 const FJ = {
-  category:"ROCKET LEAGUE",
-  c:"Under default Rocket League game settings, collecting a small boost pad gives your car exactly this many boost units.",
-  a:"What is 12?"
+  category:"COLLEGE FOOTBALL COACHES",
+  c:"This coach won seven national championships — one at LSU in 2003 and six at Alabama between 2009 and 2020 — making him the only coach in history to win titles at two different SEC programs.",
+  a:"Who is Nick Saban?"
 };
 const DEFAULT_PLAYERS=[
   {name:"Madison Gibson",color:"#8C2F2F",score:0},
