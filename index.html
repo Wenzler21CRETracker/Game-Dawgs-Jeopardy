@@ -647,6 +647,7 @@ function sbSetup(){
   });
   if(VIEW === 'host'){
     sbChannel
+      .on('broadcast',{event:'player_joined'}, p => hostHandlePlayerJoin(p.payload))
       .on('postgres_changes',{event:'INSERT',schema:'public',table:'jeopardy_buzzes'},
         p => hostHandleBuzz(p.new))
       .on('postgres_changes',{event:'INSERT',schema:'public',table:'jeopardy_wagers'},
@@ -1475,6 +1476,20 @@ function addPlayer(){
   showToast('Player added! Tap their name to rename.');
 }
 
+function hostHandlePlayerJoin(payload){
+  if(!payload||!payload.name) return;
+  const {name, color} = payload;
+  const idx = S.players.findIndex(p=>p.name===name);
+  if(idx>=0){
+    S.players[idx].color=color; // update color, keep score
+  } else {
+    S.players.push({name, color, score:0});
+  }
+  save();renderStrip();renderPcards();
+  showToast(`${name} joined!`);
+  broadcastScores(); // send current scores back to all players
+}
+
 /* ═══════════════════════════════════════════
    SUPABASE — HOST BUZZ FUNCTIONS
 ═══════════════════════════════════════════ */
@@ -1639,6 +1654,13 @@ function pvInit(){
   }
 }
 
+function pvAnnounceJoin(){
+  if(SB_OK&&sbChannel&&PV_NAME){
+    sbChannel.send({type:'broadcast',event:'player_joined',
+      payload:{name:PV_NAME,color:PV_COLOR}});
+  }
+}
+
 function pvShowGameUI(){
   document.getElementById('pv-join-screen').style.display='none';
   document.getElementById('pv-game-ui').style.display='flex';
@@ -1649,6 +1671,8 @@ function pvShowGameUI(){
     document.getElementById('pvNote').style.color='rgba(255,100,100,.6)';
   }
   pvSetState('lobby');
+  // Announce to host that this player is here
+  setTimeout(pvAnnounceJoin, 800); // small delay to ensure channel is subscribed
 }
 
 function pvJoin(){
