@@ -586,7 +586,13 @@ h1,h2,h3{font-family:Cambria,Georgia,serif;}
       </div>
       <div id="pv-fj-think" class="pv-state" style="display:none">
         <div class="pv-clue" id="pvFJClue"></div>
-        <div class="pv-msg" style="font-size:1.3rem">🤔 Think!</div>
+        <div class="pv-msg" style="font-size:.9rem;margin-bottom:10px;">Type your answer below — submit before time runs out:</div>
+        <input type="text" id="pvFJAnswerInput" placeholder="Your answer..."
+          style="width:90%;max-width:320px;padding:12px;border-radius:10px;border:1.5px solid var(--gold);background:var(--navy2);color:var(--cream);font-size:1rem;text-align:center;display:block;margin:0 auto 12px;font-family:inherit;" />
+        <div style="text-align:center;">
+          <button class="pv-join-btn" id="pvFJAnswerBtn" style="max-width:260px;padding:12px;font-size:.95rem;" onclick="submitPlayerFJAnswer()">Submit Answer</button>
+        </div>
+        <div id="pvFJAnswerStatus" style="display:none;text-align:center;color:#6fcf97;font-weight:bold;margin-top:10px;">✓ Answer submitted!</div>
       </div>
     </div>
     <div class="pv-supabase-note" id="pvNote"></div>
@@ -648,6 +654,7 @@ function sbSetup(){
   if(VIEW === 'host'){
     sbChannel
       .on('broadcast',{event:'player_joined'}, p => hostHandlePlayerJoin(p.payload))
+      .on('broadcast',{event:'fj_answer'}, p => hostHandleFJAnswer(p.payload))
       .on('postgres_changes',{event:'INSERT',schema:'public',table:'jeopardy_buzzes'},
         p => hostHandleBuzz(p.new))
       .on('postgres_changes',{event:'INSERT',schema:'public',table:'jeopardy_wagers'},
@@ -668,49 +675,49 @@ function sbSetup(){
 /* ═══════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════ */
-const CATS = ["90s-2000s ACTION MOVIES","NFL QUARTERBACKS","POTENT POTABLES","EUROPEAN GEOGRAPHY","PGA TOUR"];
+const CATS = ["90s SATURDAY CARTOONS","POKEMON GEN 1","2000s & BEYOND MOVIES","N. AMERICAN WILDLIFE","FOOD & DRINK"];
 const VALS = [100,200,300,400,500];
 const QA = {
-  "90s-2000s ACTION MOVIES":{
-    100:{c:"This 1999 Keanu Reeves film — in which humanity is unknowingly enslaved inside a computer simulation — launched one of the decade's most influential sci-fi franchises.",a:"What is The Matrix?"},
-    200:{c:"Mel Gibson starred in and directed this 1995 Best Picture winner about a Scottish warrior rallying his people against English oppression.",a:"What is Braveheart?"},
-    300:{c:"Michael Mann's 2004 thriller pairs Tom Cruise as a silver-haired contract killer with Jamie Foxx as the cab driver forced to chauffeur him through one night in Los Angeles.",a:"What is Collateral?"},
-    400:{c:"Al Pacino and Robert De Niro share their first on-screen scene together in this 1995 Michael Mann film — a tense coffee shop conversation between a cop and the thief he's hunting.",a:"What is Heat?"},
-    500:{c:"This 1999 David Fincher film ends with its narrator watching credit card company skyscrapers implode, having realized he and his anarchist alter ego are the same person.",a:"What is Fight Club?"}
+  "90s SATURDAY CARTOONS":{
+    100:{c:"Angelica Pickles's beloved ratty blond doll in Rugrats goes by this name.",a:"What is Cynthia?"},
+    200:{c:"Arnold's last name — never spoken in the original Hey Arnold series — was confirmed by creator Craig Bartlett to be this.",a:"What is Shortman?"},
+    300:{c:"The secret horror storytelling club in Are You Afraid of the Dark, which meets around a campfire in the woods, is called this.",a:"What is the Midnight Society?"},
+    400:{c:"Doug Funnie's self-imagined superhero alter ego, who wears a belted uniform and a bathtowel cape, goes by this name.",a:"Who is Quailman?"},
+    500:{c:"Mojo Jojo and the Powerpuff Girls share an origin — all four were created when Professor Utonium accidentally introduced this ingredient into his experiment.",a:"What is Chemical X?"}
   },
-  "NFL QUARTERBACKS":{
-    100:{c:"Peyton Manning set the NFL single-season touchdown record in 2013 with this many scoring throws.",a:"What is 55?"},
-    200:{c:"Drew Brees set the record for consecutive games with a touchdown pass at 54, achieving the streak while playing for this franchise.",a:"What are the New Orleans Saints?"},
-    300:{c:"Terry Bradshaw won Super Bowl MVP honors twice with Pittsburgh — these are the Roman numerals of those two Super Bowls.",a:"What are XIII and XIV?"},
-    400:{c:"This quarterback completed 88 percent of his passes in Super Bowl XXIV, the highest completion percentage in Super Bowl history at the time.",a:"Who is Joe Montana?"},
-    500:{c:"The only quarterback to win a Super Bowl while completing fewer than 50 percent of his passes, doing so for the Giants in Super Bowl XXV.",a:"Who is Jeff Hostetler?"}
+  "POKEMON GEN 1":{
+    100:{c:"Rhydon holds the distinction of being the very first Pokemon ever designed by Game Freak. This is its Pokedex number.",a:"What is 112?"},
+    200:{c:"This is the only move in Generation 1 with a base power of 150, leaving the user unable to act on the following turn.",a:"What is Hyper Beam?"},
+    300:{c:"Name all three elemental stones that trigger Eevee's three possible evolutions in Generation 1.",a:"What are the Fire Stone, Water Stone, and Thunder Stone?"},
+    400:{c:"The item duplication glitch triggered alongside a MissingNo. encounter on Cinnabar Island multiplies whichever item sits in this specific slot of the player's bag.",a:"What is the sixth item slot?"},
+    500:{c:"Despite the type chart listing Ghost as super effective against Psychic, a Generation 1 programming bug caused Ghost-type moves to deal this amount of damage to Psychic-type Pokemon.",a:"What is zero (no damage)?"}
   },
-  "POTENT POTABLES":{
-    100:{c:"Islay Scotch whisky gets its distinctive smoky flavor from drying malted barley over this specific fuel source.",a:"What is peat?"},
-    200:{c:"A Negroni contains equal parts gin, sweet vermouth, and this Italian bitter liqueur.",a:"What is Campari?"},
-    300:{c:"Mezcal can legally be produced from over 30 agave varieties; tequila is restricted to this single species.",a:"What is blue agave (Weber blue agave)?"},
-    400:{c:"This Hungarian dessert wine, made from botrytis-affected grapes, measures its sweetness level in units called puttonyos.",a:"What is Tokaji?"},
-    500:{c:"Under methode champenoise, the second fermentation that creates Champagne's bubbles occurs inside this specific vessel.",a:"What is the bottle?"}
+  "2000s & BEYOND MOVIES":{
+    100:{c:"Joaquin Phoenix performed all his own vocals as Johnny Cash in this 2005 biopic, winning a Golden Globe for the role.",a:"What is Walk the Line?"},
+    200:{c:"Christopher Nolan's 2010 dream-heist film features a Paris city-folding sequence filmed entirely on a rotating practical set with no CGI.",a:"What is Inception?"},
+    300:{c:"Paul Thomas Anderson's 2007 film takes its title from an Upton Sinclair novel and features Daniel Day-Lewis as a ruthless California oil prospector.",a:"What is There Will Be Blood?"},
+    400:{c:"This director, who created the original Mad Max trilogy in the 1970s and 80s, returned to the franchise with Fury Road in 2015, which won six Academy Awards.",a:"Who is George Miller?"},
+    500:{c:"Steven Soderbergh won Best Director at the 2001 Oscars for this drug-trade film shot with three parallel storylines, each in a distinct color palette.",a:"What is Traffic?"}
   },
-  "EUROPEAN GEOGRAPHY":{
-    100:{c:"This microstate, bordered only by Switzerland and Austria, has a capital called Vaduz and is one of only two doubly landlocked countries in the world.",a:"What is Liechtenstein?"},
-    200:{c:"The Bosphorus Strait bisects this city — the only metropolis on Earth that straddles two continents.",a:"What is Istanbul?"},
-    300:{c:"Name any one of the four countries that share borders with both Germany and France simultaneously.",a:"What is Luxembourg, Belgium, Switzerland, or Austria?"},
-    400:{c:"This autonomous Spanish region declared an illegal independence referendum in 2017, resulting in the arrest of its regional president and direct rule from Madrid.",a:"What is Catalonia?"},
-    500:{c:"The breakaway region of Transnistria, which declared independence in 1990 and hosts Russian troops to this day, is internationally recognized as part of this country.",a:"What is Moldova?"}
+  "N. AMERICAN WILDLIFE":{
+    100:{c:"The bald eagle was removed from the U.S. Endangered Species List in this year, following decades of federal protection after DDT was banned.",a:"What is 2007?"},
+    200:{c:"This is the only big cat species native to North America and possesses the strongest bite force of any land mammal in the Western Hemisphere.",a:"What is the jaguar?"},
+    300:{c:"Monarch butterflies overwinter exclusively in the mountain forests of this Mexican state, clustering on oyamel fir trees in numbers reaching hundreds of millions.",a:"What is Michoacan?"},
+    400:{c:"The wood frog survives North American winters by allowing the majority of the water in its body to do this — a feat unique among vertebrates on the continent.",a:"What is freeze solid?"},
+    500:{c:"This jawless parasitic fish entered the Great Lakes via the Welland Canal and decimated native fish populations, and is considered the most destructive aquatic invasive species in North American history.",a:"What is the sea lamprey?"}
   },
-  "PGA TOUR":{
-    100:{c:"Tiger Woods has won The Masters this many times.",a:"What is five?"},
-    200:{c:"A score of three under par on a single hole — rarer than a hole-in-one at the professional level — is called this.",a:"What is an albatross (double eagle)?"},
-    300:{c:"Jack Nicklaus won his record sixth Masters title in 1986 at this age, making him the oldest major champion in history at the time.",a:"What is 46?"},
-    400:{c:"The three holes that compose Amen Corner at Augusta National are holes 11, 12, and this number.",a:"What is 13?"},
-    500:{c:"Phil Mickelson broke the oldest-major-champion record at the 2021 PGA Championship — the previous record was held by this golfer, who won the 1968 PGA Championship at age 48.",a:"Who is Julius Boros?"}
+  "FOOD & DRINK":{
+    100:{c:"This French culinary term names the aromatic base of diced onion, celery, and carrot used to start virtually every French braise, stock, and sauce.",a:"What is mirepoix?"},
+    200:{c:"Authentic Roman carbonara calls for this specific cured pork product made from pig cheek — not pancetta, not bacon.",a:"What is guanciale?"},
+    300:{c:"In consomme clarification, this mixture of ground meat, egg whites, and aromatics rises to form a mass that traps impurities and produces a crystal-clear broth.",a:"What is a raft (or clearmeat)?"},
+    400:{c:"The fifth basic taste, officially recognized by scientists in 2002 and activated by glutamate compounds in aged cheese, soy sauce, and mushrooms, goes by this Japanese name.",a:"What is umami?"},
+    500:{c:"Named for the French chemist who documented it in 1912, this reaction between amino acids and reducing sugars produces the browning of bread crusts, seared meats, and roasted coffee.",a:"What is the Maillard reaction?"}
   }
 };
 const FJ = {
-  category:"COLLEGE FOOTBALL COACHES",
-  c:"This coach won seven national championships — one at LSU in 2003 and six at Alabama between 2009 and 2020 — making him the only coach in history to win titles at two different SEC programs.",
-  a:"Who is Nick Saban?"
+  category:"LORD OF THE RINGS FILMS",
+  c:"In The Return of the King, Eowyn kills the Witch-king — but a hobbit stabs him first, breaking his power and making her killing blow possible. Name that hobbit.",
+  a:"Who is Merry (Meriadoc Brandybuck)?"
 };
 const DEFAULT_PLAYERS=[
   {name:"Madison Gibson",color:"#8C2F2F",score:0},
@@ -745,6 +752,7 @@ function cellKey(cat,val){return cat+'::'+val;}
 let curCell=null; // {cat,val,ci,vi}
 let ddWager=0;
 let fjWagers={};
+let fjAnswers={}; // {playerName: answerText} collected during FJ think phase
 
 /* ═══════════════════════════════════════════
    SCREENS
@@ -1304,13 +1312,17 @@ function stopFJMusic(){
   document.getElementById('musicTimerLabel').textContent="Time's up!";
   playSound('reveal');
   document.getElementById('fjAnswerBlock').style.display='block';
+  fjAnswers={}; // reset answers for new round
   const rg=document.getElementById('fjRevealGrid');rg.innerHTML='';
   S.players.forEach((p,idx)=>{
     const wager=fjWagers[idx]||0;
+    const answerId='fja-'+p.name.replace(/\W/g,'_');
+    const submitted=fjAnswers[p.name];
     const row=document.createElement('div');row.className='fj-result-row';
     row.style.borderColor=p.color;row.id='fjrow-'+idx;
     row.innerHTML=`<div class="fj-result-name" style="color:${p.color}">${esc(p.name)}</div>
       <div class="fj-result-wager">Wager: $${wager} | Score going in: ${fmtScore(p.score)}</div>
+      <div id="${answerId}" style="font-size:.88rem;color:var(--cream);font-style:italic;margin:5px 0;min-height:20px;">${submitted?'"'+esc(submitted)+'"':'<span style="color:rgba(255,255,255,.3)">No answer submitted</span>'}</div>
       <div class="fj-result-btns">
         <button class="fj-correct-btn" onclick="fjScore(${idx},true)">✓ CORRECT +$${wager}</button>
         <button class="fj-wrong-btn" onclick="fjScore(${idx},false)">✗ WRONG −$${wager}</button>
@@ -1754,11 +1766,28 @@ async function submitBuzz(){
 }
 
 function pvManualFJWager(){
-  // Player manually triggers FJ wager screen
-  // Use cached score from last broadcast, or fall back to 0
   const players = pvLastKnownPlayers;
   const me = players ? players.find(p=>p.name===PV_NAME) : null;
   pvSetState('fj-wager', me ? {players} : {});
+}
+
+function submitPlayerFJAnswer(){
+  const answer=(document.getElementById('pvFJAnswerInput').value||'').trim();
+  if(!answer){showToast('Please type your answer first.');return;}
+  if(SB_OK&&sbChannel){
+    sbChannel.send({type:'broadcast',event:'fj_answer',payload:{name:PV_NAME,answer}});
+  }
+  document.getElementById('pvFJAnswerInput').disabled=true;
+  document.getElementById('pvFJAnswerBtn').disabled=true;
+  document.getElementById('pvFJAnswerStatus').style.display='block';
+}
+
+function hostHandleFJAnswer(payload){
+  if(!payload||!payload.name) return;
+  fjAnswers[payload.name]=payload.answer;
+  const id='fja-'+payload.name.replace(/\W/g,'_');
+  const el=document.getElementById(id);
+  if(el) el.textContent='"'+payload.answer+'"';
 }
 
 async function submitPlayerWager(){
